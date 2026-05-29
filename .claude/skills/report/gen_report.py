@@ -30,6 +30,118 @@ PERIOD_COLORS = {'最佳': '#22c55e', '合适': '#3b82f6', '还行': '#f59e0b', 
 LIMIT_COLORS = {'良心': '#22c55e', '不太地道': '#f59e0b', '恶犬': '#ef4444'}
 
 
+# ── 辅助函数 ──────────────────────────────────────────────
+
+def get_entry_type(plan_name, pricing_rule, premise):
+    text = (plan_name + ' ' + pricing_rule + ' ' + premise).lower()
+    
+    if '永不过期' in text or '无过期' in text:
+        return '散充'
+        
+    if any(k in text for k in ['/年', '年卡', '年度', '年额度', 'year']):
+        return '年卡'
+    if any(k in text for k in ['/季', '季卡', '季度', 'quarter']):
+        return '季卡'
+    if any(k in text for k in ['/月', '月卡', '月度', '/30天', '30天', 'month']):
+        return '月卡'
+    if any(k in text for k in ['/周', '周卡', '周度', '/7天', '7天', 'week']):
+        return '周卡'
+    if any(k in text for k in ['/天', '天卡', '/日', '日卡', 'day']):
+        return '日卡'
+        
+    if '散充' in text:
+        return '散充'
+        
+    return '散充'
+
+
+def get_multiplier(pricing_rule, premise):
+    text = (pricing_rule + ' ' + premise).lower()
+    
+    m = re.search(r'([0-9]+(?:\.[0-9]+)?)\s*x', text)
+    if m:
+        return float(m.group(1))
+        
+    m = re.search(r'倍率\s*[：:]?\s*([0-9]+(?:\.[0-9]+)?)', text)
+    if m:
+        return float(m.group(1))
+        
+    if '1:1' in text:
+        return 1.0
+        
+    return 1.0
+
+
+def get_entry_limit(pricing_rule, premise):
+    text = (pricing_rule + ' ' + premise).lower()
+    cleaned = re.sub(r'每日[一]?次?恢复|每日重置|每日恢复', '', text)
+    
+    if any(k in cleaned for k in ['5h限额', '5小时', '每5小时']):
+        return '恶犬'
+        
+    has_day_limit = any(k in cleaned for k in ['日限', '每日限', '天限', '每日限额'])
+    has_week_limit = any(k in cleaned for k in ['周限', '7天限', '每7天', '周限额'])
+    
+    if not (has_day_limit or has_week_limit):
+        return '良心'
+        
+    m_day = re.search(r'(?:日限|每日限|日限额|天限|每日)\$?([0-9]+(?:\.[0-9]+)?)', cleaned)
+    m_week = re.search(r'(?:周限|每7天|7天限|周限额)\$?([0-9]+(?:\.[0-9]+)?)', cleaned)
+    
+    day_limit_val = float(m_day.group(1)) if m_day else None
+    week_limit_val = float(m_week.group(1)) if m_week else None
+    
+    avg_daily_limit_platform = None
+    if day_limit_val is not None:
+        avg_daily_limit_platform = day_limit_val
+    elif week_limit_val is not None:
+        avg_daily_limit_platform = week_limit_val / 7.0
+        
+    if avg_daily_limit_platform is not None:
+        mult = get_multiplier(pricing_rule, premise)
+        avg_daily_limit_official = avg_daily_limit_platform / mult
+    else:
+        avg_daily_limit_official = 0.0
+        
+    if has_day_limit:
+        if avg_daily_limit_official > 50.0:
+            return '不太地道'
+        else:
+            return '恶犬'
+    elif has_week_limit:
+        return '不太地道'
+        
+    return '良心'
+
+
+def calculate_package_score(price, period_type, limit_type):
+    if price <= 0.05:
+        price_score = 70.0
+    elif price >= 1.5:
+        price_score = 0.0
+    else:
+        price_score = 70.0 - (price - 0.05) / (1.5 - 0.05) * 70.0
+        
+    period_scores = {
+        '散充': 15,
+        '年卡': 12,
+        '季卡': 12,
+        '月卡': 12,
+        '周卡': 8,
+        '日卡': 3
+    }
+    period_score = period_scores.get(period_type, 10)
+    
+    limit_scores = {
+        '良心': 15,
+        '不太地道': 8,
+        '恶犬': 0
+    }
+    limit_score = limit_scores.get(limit_type, 10)
+    
+    return round(price_score + period_score + limit_score, 1)
+
+
 # ══════════════════════════════════════════════════════════
 # 1. 数据读取与分组
 # ══════════════════════════════════════════════════════════
@@ -62,6 +174,10 @@ def group_by_vendor(rows):
         if not plan_name:
             plan_name = '(默认)'
         price_val = float(price_str.replace('¥', ''))
+        
+        card_type = get_entry_type(plan_name, pricing_rule, premise)
+        limit_type = get_entry_limit(pricing_rule, premise)
+        score = calculate_package_score(price_val, card_type, limit_type)
 
         if vendor not in vendors:
             vendors[vendor] = []
@@ -73,6 +189,9 @@ def group_by_vendor(rows):
             'user_paid': user_paid,
             'price_str': price_str,
             'price_val': price_val,
+            'card_type': card_type,
+            'limit_type': limit_type,
+            'score': score,
         })
     return vendors
 
@@ -99,22 +218,16 @@ def period_rating(entries):
     best_sub = None
 
     for e in entries:
-        text = e['plan_name'] + ' ' + e['pricing_rule'] + ' ' + e['premise']
-        # 散充无过期
-        if '永不过期' in text:
+        card_type = e.get('card_type')
+        if card_type == '散充':
             has_scatter = True
-        elif '散充' in e['plan_name'] and not any(
-            k in e['pricing_rule'] for k in ['/天', '/日', '/周', '/月', '/季', '/年', '天卡', '周卡', '月卡', '季卡', '年卡']
-        ):
-            has_scatter = True
-        # 订阅周期
-        if any(k in text for k in ['/月', '月卡', '/季', '季卡', '/年', '年卡', '年度', '/30天']):
+        elif card_type in ['年卡', '季卡', '月卡']:
             if best_sub is None or best_sub[0] > 1:
                 best_sub = (1, '月卡+', '合适', '📅')
-        if any(k in text for k in ['/周', '周卡', '/7天']):
+        elif card_type == '周卡':
             if best_sub is None or best_sub[0] > 2:
                 best_sub = (2, '周卡', '还行', '📆')
-        if any(k in text for k in ['/天', '天卡', '/日']):
+        elif card_type == '日卡':
             if best_sub is None or best_sub[0] > 3:
                 best_sub = (3, '日卡', '慎之又慎', '⚠️')
 
@@ -131,12 +244,10 @@ def limit_rating(entries):
     worst = 0  # 0=良心, 1=不太地道, 2=恶犬
 
     for e in entries:
-        text = e['pricing_rule'] + ' ' + e['premise']
-        # 排除"每日重置""每日恢复"等积分回复机制（属于正面特征）
-        cleaned = re.sub(r'每日[一]?次?恢复|每日重置', '', text)
-        if any(k in cleaned for k in ['5h限额', '5小时', '每5小时', '日限', '每日限']):
+        limit_str = e.get('limit_type')
+        if limit_str == '恶犬':
             worst = max(worst, 2)
-        elif any(k in text for k in ['周限', '7天限', '每7天']):
+        elif limit_str == '不太地道':
             worst = max(worst, 1)
 
     if worst == 2:
@@ -256,7 +367,36 @@ h1{font-size:1.75rem;font-weight:700;margin-bottom:0.5rem;color:#0f172a}
 h2{font-size:1.35rem;font-weight:600;margin:2rem 0 1rem;color:#0f172a;
    border-bottom:2px solid #e2e8f0;padding-bottom:0.5rem}
 h3{font-size:1.15rem;font-weight:600;color:#0f172a;display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap}
-.meta{color:#64748b;margin-bottom:2rem;font-size:0.95rem}
+.meta{color:#64748b;margin-bottom:1.5rem;font-size:0.95rem}
+.filter-panel {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 2px solid #e2e8f0;
+}
+.filter-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+}
+.filter-chk {
+  width: 1.1rem;
+  height: 1.1rem;
+  cursor: pointer;
+}
 .table-wrap{overflow-x:auto;margin:1rem 0}
 table{width:100%;border-collapse:collapse;font-size:0.9rem}
 th{background:#f1f5f9;font-weight:600;text-align:left;padding:0.65rem 0.75rem;
@@ -266,9 +406,34 @@ tbody tr:nth-child(even){background:#f8fafc}
 tbody tr:hover{background:#e2e8f0}
 .badge{display:inline-block;padding:0.2rem 0.65rem;border-radius:9999px;
        color:#fff;font-size:0.8rem;font-weight:600;white-space:nowrap}
+.score-badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-align: center;
+}
+.score-high {
+  background: #dcfce7;
+  color: #15803d;
+}
+.score-medium {
+  background: #fef9c3;
+  color: #a16207;
+}
+.score-low {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+.card-type-badge {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
 .vendor-card{background:#fff;border-radius:12px;
-             box-shadow:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.06);
-             padding:1.5rem;margin-bottom:1.25rem}
+              box-shadow:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.06);
+              padding:1.5rem;margin-bottom:1.25rem}
 .ratings{display:flex;gap:0.75rem;flex-wrap:wrap;margin:0.75rem 0}
 .rating-item{display:flex;align-items:center;gap:0.4rem;font-size:0.9rem}
 .rating-label{color:#64748b}
@@ -326,11 +491,33 @@ CRITERIA_HTML = '''
 <tr><td>仅周（7天）限额</td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td></tr>
 <tr><td>有日限 / 5h限额</td><td><span class="badge" style="background:#ef4444">🔗 恶犬</span></td></tr>
 </tbody></table>
+<div class="warning-tip">⚠️ 日/周限额若折合每日额度&gt; $50 官方等值，则会宽免至“不太地道”。</div>
 </div>
 '''
 
 
 def generate_html(vendor_analysis, total_entries):
+    # 编译所有单项套餐，用于“大乱斗”
+    all_packages = []
+    for v in vendor_analysis:
+        for e in v['entries']:
+            all_packages.append({
+                'vendor': v['name'],
+                'plan_name': e['plan_name'],
+                'pricing_rule': e['pricing_rule'],
+                'premise': e['premise'],
+                'equiv_usage': e['equiv_usage'],
+                'user_paid': e['user_paid'],
+                'price_str': e['price_str'],
+                'price_val': e['price_val'],
+                'card_type': e['card_type'],
+                'limit_type': e['limit_type'],
+                'score': e['score'],
+            })
+    
+    # 按照评分降序，价格升序进行全局排序
+    all_packages.sort(key=lambda p: (-p['score'], p['price_val']))
+
     h = []
 
     # Head
@@ -339,16 +526,27 @@ def generate_html(vendor_analysis, total_entries):
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI 中转站比价分析报告 - {TODAY}</title>
+<title>AI 中转站比价 analysis 报告 - {TODAY}</title>
 <style>{CSS}</style>
 </head>
 <body>
 
 <h1>AI 中转站比价分析报告</h1>
 <p class="meta">生成日期：{TODAY}　·　数据条目：{total_entries} 条　·　覆盖供应商：{len(vendor_analysis)} 家</p>
+
+<!-- 筛选面板 -->
+<div class="filter-panel">
+  <strong>筛选卡种：</strong>
+  <label class="filter-label"><input type="checkbox" class="filter-chk" value="散充" checked> 散充</label>
+  <label class="filter-label"><input type="checkbox" class="filter-chk" value="日卡" checked> 日卡</label>
+  <label class="filter-label"><input type="checkbox" class="filter-chk" value="周卡" checked> 周卡</label>
+  <label class="filter-label"><input type="checkbox" class="filter-chk" value="月卡" checked> 月卡</label>
+  <label class="filter-label"><input type="checkbox" class="filter-chk" value="季卡" checked> 季卡</label>
+  <label class="filter-label"><input type="checkbox" class="filter-chk" value="年卡" checked> 年卡</label>
+</div>
 ''')
 
-    # ── 排行榜 ──
+    # ── 供应商排行榜 ──
     h.append('<h2>供应商排行榜</h2>\n<div class="table-wrap"><table>\n<thead><tr>')
     h.append('<th>排名</th><th>供应商</th><th>最优折合定价</th><th>定价评级</th><th>周期评级</th><th>限额评级</th><th>综合评语</th>')
     h.append('</tr></thead>\n<tbody>\n')
@@ -361,7 +559,7 @@ def generate_html(vendor_analysis, total_entries):
         li_color = LIMIT_COLORS.get(li_label, '#94a3b8')
         short = v['comment'][:40] + '…' if len(v['comment']) > 40 else v['comment']
 
-        h.append(f'<tr>'
+        h.append(f'<tr class="leaderboard-row" data-vendor-name="{esc(v["name"])}">'
                  f'<td class="rank-num">{i+1}</td>'
                  f'<td><strong>{esc(v["name"])}</strong></td>'
                  f'<td><span class="price-val" style="color:{pr_color}">¥{v["best_price"]:.3f}</span></td>'
@@ -369,6 +567,41 @@ def generate_html(vendor_analysis, total_entries):
                  f'<td><span class="badge" style="background:{pe_color}">{pe_icon} {pe_label}</span></td>'
                  f'<td><span class="badge" style="background:{li_color}">{li_icon} {li_label}</span></td>'
                  f'<td style="color:#64748b;font-size:0.85rem">{esc(short)}</td>'
+                 f'</tr>\n')
+
+    h.append('</tbody></table></div>\n')
+
+    # ── 全局套餐性价比大乱斗 ──
+    h.append('<h2>套餐性价比大乱斗</h2>\n<div class="table-wrap"><table id="brawl-table">\n<thead><tr>')
+    h.append('<th>排名</th><th>供应商</th><th>套餐名称</th><th>卡种</th><th>折合定价/官方$1</th><th>综合评分</th><th>限额评级</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th>')
+    h.append('</tr></thead>\n<tbody>\n')
+
+    limit_colors = {'良心': '#22c55e', '不太地道': '#f59e0b', '恶犬': '#ef4444'}
+    limit_emojis = {'良心': '🟢', '不太地道': '🚧', '恶犬': '🔗'}
+
+    for i, p in enumerate(all_packages):
+        c = pricing_rating(p['price_val'])[1]
+        l_col = limit_colors.get(p['limit_type'], '#94a3b8')
+        l_emo = limit_emojis.get(p['limit_type'], '❓')
+        
+        if p['score'] >= 80:
+            score_class = 'score-high'
+        elif p['score'] >= 50:
+            score_class = 'score-medium'
+        else:
+            score_class = 'score-low'
+
+        h.append(f'<tr class="package-row" data-card-type="{esc(p["card_type"])}">'
+                 f'<td class="brawl-rank" style="font-weight:bold;color:#64748b">{i+1}</td>'
+                 f'<td><strong>{esc(p["vendor"])}</strong></td>'
+                 f'<td>{esc(p["plan_name"])}</td>'
+                 f'<td><span class="badge card-type-badge">{esc(p["card_type"])}</span></td>'
+                 f'<td><span class="price-val" style="color:{c}">{esc(p["price_str"])}</span></td>'
+                 f'<td><span class="score-badge {score_class}">{p["score"]} 分</span></td>'
+                 f'<td><span class="badge" style="background:{l_col}">{l_emo} {p["limit_type"]}</span></td>'
+                 f'<td style="font-size:0.85rem;color:#475569">{esc(p["pricing_rule"])}</td>'
+                 f'<td>{esc(p["equiv_usage"])}</td>'
+                 f'<td>{esc(p["user_paid"])}</td>'
                  f'</tr>\n')
 
     h.append('</tbody></table></div>\n')
@@ -386,7 +619,7 @@ def generate_html(vendor_analysis, total_entries):
         pe_color = PERIOD_COLORS.get(pe_label, '#94a3b8')
         li_color = LIMIT_COLORS.get(li_label, '#94a3b8')
 
-        h.append(f'<div class="vendor-card" id="vendor-{i+1}">\n')
+        h.append(f'<div class="vendor-card" id="vendor-{i+1}" data-vendor-name="{esc(v["name"])}">\n')
         h.append(f'<h3>{esc(v["name"])} '
                  f'<span class="badge" style="background:{pr_color}">{pr_label} ¥{v["best_price"]:.3f}</span></h3>\n')
         h.append('<div class="ratings">\n')
@@ -401,26 +634,116 @@ def generate_html(vendor_analysis, total_entries):
 
         # 套餐明细表
         h.append('<div class="table-wrap"><table>\n<thead><tr>')
-        h.append('<th>套餐名称</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th><th>折合定价/官方$1</th>')
+        h.append('<th>套餐名称</th><th>卡种</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th><th>评分</th><th>限额</th><th>折合定价/官方$1</th>')
         h.append('</tr></thead>\n<tbody>\n')
 
         for e in sorted(v['entries'], key=lambda x: x['price_val']):
             c = pricing_rating(e['price_val'])[1]
-            h.append(f'<tr>'
-                     f'<td>{esc(e["plan_name"])}</td>'
+            l_col = limit_colors.get(e['limit_type'], '#94a3b8')
+            l_emo = limit_emojis.get(e['limit_type'], '❓')
+            
+            if e['score'] >= 80:
+                score_class = 'score-high'
+            elif e['score'] >= 50:
+                score_class = 'score-medium'
+            else:
+                score_class = 'score-low'
+
+            h.append(f'<tr class="package-row" data-card-type="{esc(e["card_type"])}">'
+                     f'<td><strong>{esc(e["plan_name"])}</strong></td>'
+                     f'<td><span class="badge card-type-badge">{esc(e["card_type"])}</span></td>'
                      f'<td>{esc(e["pricing_rule"])}</td>'
                      f'<td>{esc(e["equiv_usage"])}</td>'
                      f'<td>{esc(e["user_paid"])}</td>'
+                     f'<td><span class="score-badge {score_class}">{e["score"]} 分</span></td>'
+                     f'<td><span class="badge" style="background:{l_col}">{l_emo} {e["limit_type"]}</span></td>'
                      f'<td><span class="price-val" style="color:{c}">{esc(e["price_str"])}</span></td>'
                      f'</tr>\n')
 
         h.append('</tbody></table></div>\n</div>\n')
 
-    # Footer
+    # Footer and JS Script
     h.append(f'''
 <div style="text-align:center;color:#94a3b8;font-size:0.8rem;margin:2rem 0 1rem;padding-top:1rem;border-top:1px solid #e2e8f0">
   AI 中转站比价分析报告 · 数据截至 {TODAY} · 仅供参考，请以实际体验为准
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {{
+  const chks = document.querySelectorAll('.filter-chk');
+  
+  function updateFilter() {{
+    const activeTypes = Array.from(chks)
+      .filter(c => c.checked)
+      .map(c => c.value);
+      
+    // 1. 过滤具体套餐行
+    const rows = document.querySelectorAll('.package-row');
+    rows.forEach(row => {{
+      const type = row.getAttribute('data-card-type');
+      if (activeTypes.includes(type)) {{
+        row.style.display = '';
+      }} else {{
+        row.style.display = 'none';
+      }}
+    }});
+    
+    // 2. 过滤供应商详情卡片 (若供应商所有套餐都被过滤，隐藏该卡片)
+    const cards = document.querySelectorAll('.vendor-card');
+    cards.forEach(card => {{
+      const cardRows = card.querySelectorAll('.package-row');
+      let hasVisible = false;
+      cardRows.forEach(row => {{
+        if (row.style.display !== 'none') {{
+          hasVisible = true;
+        }}
+      }});
+      if (hasVisible) {{
+        card.style.display = '';
+      }} else {{
+        card.style.display = 'none';
+      }}
+    }});
+    
+    // 3. 过滤供应商排行榜行 (对应卡片隐藏，则排行榜隐藏)
+    const lbRows = document.querySelectorAll('.leaderboard-row');
+    lbRows.forEach(lbRow => {{
+      const vendorName = lbRow.getAttribute('data-vendor-name');
+      const card = document.querySelector(`.vendor-card[data-vendor-name="${{vendorName}}"]`);
+      if (card && card.style.display !== 'none') {{
+        lbRow.style.display = '';
+      }} else {{
+        lbRow.style.display = 'none';
+      }}
+    }});
+    
+    // 4. 重新计算大乱斗中可见套餐的排名数字
+    const brawlRows = document.querySelectorAll('#brawl-table tbody tr.package-row');
+    let rank = 1;
+    brawlRows.forEach(row => {{
+      if (row.style.display !== 'none') {{
+        const rankCell = row.querySelector('.brawl-rank');
+        if (rankCell) rankCell.textContent = rank++;
+      }}
+    }});
+    
+    // 5. 重新计算排行榜中可见供应商的排名数字
+    let lbRank = 1;
+    lbRows.forEach(row => {{
+      if (row.style.display !== 'none') {{
+        const rankCell = row.querySelector('.rank-num');
+        if (rankCell) rankCell.textContent = lbRank++;
+      }}
+    }});
+  }}
+  
+  chks.forEach(chk => {{
+    chk.addEventListener('change', updateFilter);
+  }});
+  
+  updateFilter();
+}});
+</script>
 </body>
 </html>''')
 

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI 中转站比价分析报告 - 2026-05-29</title>
+<title>AI 中转站比价 analysis 报告 - 2026-05-29</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{
@@ -16,7 +16,36 @@ h1{font-size:1.75rem;font-weight:700;margin-bottom:0.5rem;color:#0f172a}
 h2{font-size:1.35rem;font-weight:600;margin:2rem 0 1rem;color:#0f172a;
    border-bottom:2px solid #e2e8f0;padding-bottom:0.5rem}
 h3{font-size:1.15rem;font-weight:600;color:#0f172a;display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap}
-.meta{color:#64748b;margin-bottom:2rem;font-size:0.95rem}
+.meta{color:#64748b;margin-bottom:1.5rem;font-size:0.95rem}
+.filter-panel {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 2px solid #e2e8f0;
+}
+.filter-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+}
+.filter-chk {
+  width: 1.1rem;
+  height: 1.1rem;
+  cursor: pointer;
+}
 .table-wrap{overflow-x:auto;margin:1rem 0}
 table{width:100%;border-collapse:collapse;font-size:0.9rem}
 th{background:#f1f5f9;font-weight:600;text-align:left;padding:0.65rem 0.75rem;
@@ -26,9 +55,34 @@ tbody tr:nth-child(even){background:#f8fafc}
 tbody tr:hover{background:#e2e8f0}
 .badge{display:inline-block;padding:0.2rem 0.65rem;border-radius:9999px;
        color:#fff;font-size:0.8rem;font-weight:600;white-space:nowrap}
+.score-badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-align: center;
+}
+.score-high {
+  background: #dcfce7;
+  color: #15803d;
+}
+.score-medium {
+  background: #fef9c3;
+  color: #a16207;
+}
+.score-low {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+.card-type-badge {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
 .vendor-card{background:#fff;border-radius:12px;
-             box-shadow:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.06);
-             padding:1.5rem;margin-bottom:1.25rem}
+              box-shadow:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.06);
+              padding:1.5rem;margin-bottom:1.25rem}
 .ratings{display:flex;gap:0.75rem;flex-wrap:wrap;margin:0.75rem 0}
 .rating-item{display:flex;align-items:center;gap:0.4rem;font-size:0.9rem}
 .rating-label{color:#64748b}
@@ -55,22 +109,96 @@ tbody tr:hover{background:#e2e8f0}
 
 <h1>AI 中转站比价分析报告</h1>
 <p class="meta">生成日期：2026-05-29　·　数据条目：58 条　·　覆盖供应商：12 家</p>
+
+<!-- 筛选面板 -->
+<div class="filter-panel">
+  <strong>筛选卡种：</strong>
+  <label class="filter-label"><input type="checkbox" class="filter-chk" value="散充" checked> 散充</label>
+  <label class="filter-label"><input type="checkbox" class="filter-chk" value="日卡" checked> 日卡</label>
+  <label class="filter-label"><input type="checkbox" class="filter-chk" value="周卡" checked> 周卡</label>
+  <label class="filter-label"><input type="checkbox" class="filter-chk" value="月卡" checked> 月卡</label>
+  <label class="filter-label"><input type="checkbox" class="filter-chk" value="季卡" checked> 季卡</label>
+  <label class="filter-label"><input type="checkbox" class="filter-chk" value="年卡" checked> 年卡</label>
+</div>
 <h2>供应商排行榜</h2>
 <div class="table-wrap"><table>
 <thead><tr><th>排名</th><th>供应商</th><th>最优折合定价</th><th>定价评级</th><th>周期评级</th><th>限额评级</th><th>综合评语</th></tr></thead>
 <tbody>
-<tr><td class="rank-num">1</td><td><strong>ai.input.im</strong></td><td><span class="price-val" style="color:#3b82f6">¥0.012</span></td><td><span class="badge" style="background:#3b82f6">捡漏</span></td><td><span class="badge" style="background:#3b82f6">📅 合适</span></td><td><span class="badge" style="background:#ef4444">🔗 恶犬</span></td><td style="color:#64748b;font-size:0.85rem">折合定价低至¥0.012堪称捡漏，需警惕额度是否用得完，月卡+周期合理、使用充裕…</td></tr>
-<tr><td class="rank-num">2</td><td><strong>krill-ai.com</strong></td><td><span class="price-val" style="color:#3b82f6">¥0.030</span></td><td><span class="badge" style="background:#3b82f6">捡漏</span></td><td><span class="badge" style="background:#f59e0b">📆 还行</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价低至¥0.030堪称捡漏，需警惕额度是否用得完，仅有周卡可选，需把握使用…</td></tr>
-<tr><td class="rank-num">3</td><td><strong>666ai.top</strong></td><td><span class="price-val" style="color:#3b82f6">¥0.047</span></td><td><span class="badge" style="background:#3b82f6">捡漏</span></td><td><span class="badge" style="background:#22c55e">🔓 最佳</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价低至¥0.047堪称捡漏，需警惕额度是否用得完，散充永不过期是最大加分项…</td></tr>
-<tr><td class="rank-num">4</td><td><strong>u3u.dev</strong></td><td><span class="price-val" style="color:#3b82f6">¥0.060</span></td><td><span class="badge" style="background:#3b82f6">捡漏</span></td><td><span class="badge" style="background:#22c55e">🔓 最佳</span></td><td><span class="badge" style="background:#ef4444">🔗 恶犬</span></td><td style="color:#64748b;font-size:0.85rem">折合定价低至¥0.060堪称捡漏，需警惕额度是否用得完，散充永不过期是最大加分项…</td></tr>
-<tr><td class="rank-num">5</td><td><strong>UniVibe</strong></td><td><span class="price-val" style="color:#3b82f6">¥0.084</span></td><td><span class="badge" style="background:#3b82f6">捡漏</span></td><td><span class="badge" style="background:#3b82f6">📅 合适</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价低至¥0.084堪称捡漏，需警惕额度是否用得完，月卡+周期合理、使用充裕…</td></tr>
-<tr><td class="rank-num">6</td><td><strong>菜虚坤</strong></td><td><span class="price-val" style="color:#f59e0b">¥0.141</span></td><td><span class="badge" style="background:#f59e0b">正常价</span></td><td><span class="badge" style="background:#3b82f6">📅 合适</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价¥0.141处于正常区间，月卡+周期合理、使用充裕，无恶性限额整体友好。…</td></tr>
-<tr><td class="rank-num">7</td><td><strong>FreeModel.dev</strong></td><td><span class="price-val" style="color:#f59e0b">¥0.160</span></td><td><span class="badge" style="background:#f59e0b">正常价</span></td><td><span class="badge" style="background:#22c55e">🔓 最佳</span></td><td><span class="badge" style="background:#ef4444">🔗 恶犬</span></td><td style="color:#64748b;font-size:0.85rem">折合定价¥0.160处于正常区间，散充永不过期是最大加分项，存在日限或5h限额体…</td></tr>
-<tr><td class="rank-num">8</td><td><strong>chaoye.xyz</strong></td><td><span class="price-val" style="color:#f59e0b">¥0.200</span></td><td><span class="badge" style="background:#f59e0b">正常价</span></td><td><span class="badge" style="background:#22c55e">🔓 最佳</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价¥0.200处于正常区间，散充永不过期是最大加分项，无恶性限额整体友好。…</td></tr>
-<tr><td class="rank-num">9</td><td><strong>autocode.space</strong></td><td><span class="price-val" style="color:#f59e0b">¥0.300</span></td><td><span class="badge" style="background:#f59e0b">正常价</span></td><td><span class="badge" style="background:#22c55e">🔓 最佳</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价¥0.300处于正常区间，散充永不过期是最大加分项，无恶性限额整体友好，…</td></tr>
-<tr><td class="rank-num">10</td><td><strong>relayai.asia</strong></td><td><span class="price-val" style="color:#f59e0b">¥0.385</span></td><td><span class="badge" style="background:#f59e0b">正常价</span></td><td><span class="badge" style="background:#22c55e">🔓 最佳</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价¥0.385处于正常区间，散充永不过期是最大加分项，无恶性限额整体友好。…</td></tr>
-<tr><td class="rank-num">11</td><td><strong>link-ai.cc</strong></td><td><span class="price-val" style="color:#f59e0b">¥0.432</span></td><td><span class="badge" style="background:#f59e0b">正常价</span></td><td><span class="badge" style="background:#22c55e">🔓 最佳</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价¥0.432处于正常区间，散充永不过期是最大加分项，无恶性限额整体友好，…</td></tr>
-<tr><td class="rank-num">12</td><td><strong>HyperAPI.cc</strong></td><td><span class="price-val" style="color:#ef4444">¥1.273</span></td><td><span class="badge" style="background:#ef4444">噶韭菜</span></td><td><span class="badge" style="background:#3b82f6">📅 合适</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价高达¥1.273属于韭菜价位，月卡+周期合理、使用充裕，无恶性限额整体友…</td></tr>
+<tr class="leaderboard-row" data-vendor-name="ai.input.im"><td class="rank-num">1</td><td><strong>ai.input.im</strong></td><td><span class="price-val" style="color:#3b82f6">¥0.012</span></td><td><span class="badge" style="background:#3b82f6">捡漏</span></td><td><span class="badge" style="background:#3b82f6">📅 合适</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td style="color:#64748b;font-size:0.85rem">折合定价低至¥0.012堪称捡漏，需警惕额度是否用得完，月卡+周期合理、使用充裕…</td></tr>
+<tr class="leaderboard-row" data-vendor-name="krill-ai.com"><td class="rank-num">2</td><td><strong>krill-ai.com</strong></td><td><span class="price-val" style="color:#3b82f6">¥0.030</span></td><td><span class="badge" style="background:#3b82f6">捡漏</span></td><td><span class="badge" style="background:#f59e0b">📆 还行</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价低至¥0.030堪称捡漏，需警惕额度是否用得完，仅有周卡可选，需把握使用…</td></tr>
+<tr class="leaderboard-row" data-vendor-name="666ai.top"><td class="rank-num">3</td><td><strong>666ai.top</strong></td><td><span class="price-val" style="color:#3b82f6">¥0.047</span></td><td><span class="badge" style="background:#3b82f6">捡漏</span></td><td><span class="badge" style="background:#22c55e">🔓 最佳</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价低至¥0.047堪称捡漏，需警惕额度是否用得完，散充永不过期是最大加分项…</td></tr>
+<tr class="leaderboard-row" data-vendor-name="u3u.dev"><td class="rank-num">4</td><td><strong>u3u.dev</strong></td><td><span class="price-val" style="color:#3b82f6">¥0.060</span></td><td><span class="badge" style="background:#3b82f6">捡漏</span></td><td><span class="badge" style="background:#22c55e">🔓 最佳</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td style="color:#64748b;font-size:0.85rem">折合定价低至¥0.060堪称捡漏，需警惕额度是否用得完，散充永不过期是最大加分项…</td></tr>
+<tr class="leaderboard-row" data-vendor-name="UniVibe"><td class="rank-num">5</td><td><strong>UniVibe</strong></td><td><span class="price-val" style="color:#3b82f6">¥0.084</span></td><td><span class="badge" style="background:#3b82f6">捡漏</span></td><td><span class="badge" style="background:#3b82f6">📅 合适</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价低至¥0.084堪称捡漏，需警惕额度是否用得完，月卡+周期合理、使用充裕…</td></tr>
+<tr class="leaderboard-row" data-vendor-name="菜虚坤"><td class="rank-num">6</td><td><strong>菜虚坤</strong></td><td><span class="price-val" style="color:#f59e0b">¥0.141</span></td><td><span class="badge" style="background:#f59e0b">正常价</span></td><td><span class="badge" style="background:#3b82f6">📅 合适</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价¥0.141处于正常区间，月卡+周期合理、使用充裕，无恶性限额整体友好。…</td></tr>
+<tr class="leaderboard-row" data-vendor-name="FreeModel.dev"><td class="rank-num">7</td><td><strong>FreeModel.dev</strong></td><td><span class="price-val" style="color:#f59e0b">¥0.160</span></td><td><span class="badge" style="background:#f59e0b">正常价</span></td><td><span class="badge" style="background:#22c55e">🔓 最佳</span></td><td><span class="badge" style="background:#ef4444">🔗 恶犬</span></td><td style="color:#64748b;font-size:0.85rem">折合定价¥0.160处于正常区间，散充永不过期是最大加分项，存在日限或5h限额体…</td></tr>
+<tr class="leaderboard-row" data-vendor-name="chaoye.xyz"><td class="rank-num">8</td><td><strong>chaoye.xyz</strong></td><td><span class="price-val" style="color:#f59e0b">¥0.200</span></td><td><span class="badge" style="background:#f59e0b">正常价</span></td><td><span class="badge" style="background:#22c55e">🔓 最佳</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价¥0.200处于正常区间，散充永不过期是最大加分项，无恶性限额整体友好。…</td></tr>
+<tr class="leaderboard-row" data-vendor-name="autocode.space"><td class="rank-num">9</td><td><strong>autocode.space</strong></td><td><span class="price-val" style="color:#f59e0b">¥0.300</span></td><td><span class="badge" style="background:#f59e0b">正常价</span></td><td><span class="badge" style="background:#22c55e">🔓 最佳</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价¥0.300处于正常区间，散充永不过期是最大加分项，无恶性限额整体友好，…</td></tr>
+<tr class="leaderboard-row" data-vendor-name="relayai.asia"><td class="rank-num">10</td><td><strong>relayai.asia</strong></td><td><span class="price-val" style="color:#f59e0b">¥0.385</span></td><td><span class="badge" style="background:#f59e0b">正常价</span></td><td><span class="badge" style="background:#22c55e">🔓 最佳</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价¥0.385处于正常区间，散充永不过期是最大加分项，无恶性限额整体友好。…</td></tr>
+<tr class="leaderboard-row" data-vendor-name="link-ai.cc"><td class="rank-num">11</td><td><strong>link-ai.cc</strong></td><td><span class="price-val" style="color:#f59e0b">¥0.432</span></td><td><span class="badge" style="background:#f59e0b">正常价</span></td><td><span class="badge" style="background:#22c55e">🔓 最佳</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价¥0.432处于正常区间，散充永不过期是最大加分项，无恶性限额整体友好，…</td></tr>
+<tr class="leaderboard-row" data-vendor-name="HyperAPI.cc"><td class="rank-num">12</td><td><strong>HyperAPI.cc</strong></td><td><span class="price-val" style="color:#ef4444">¥1.273</span></td><td><span class="badge" style="background:#ef4444">噶韭菜</span></td><td><span class="badge" style="background:#3b82f6">📅 合适</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价高达¥1.273属于韭菜价位，月卡+周期合理、使用充裕，无恶性限额整体友…</td></tr>
+</tbody></table></div>
+<h2>套餐性价比大乱斗</h2>
+<div class="table-wrap"><table id="brawl-table">
+<thead><tr><th>排名</th><th>供应商</th><th>套餐名称</th><th>卡种</th><th>折合定价/官方$1</th><th>综合评分</th><th>限额评级</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th></tr></thead>
+<tbody>
+<tr class="package-row" data-card-type="散充"><td class="brawl-rank" style="font-weight:bold;color:#64748b">1</td><td><strong>666ai.top</strong></td><td>散充</td><td><span class="badge card-type-badge">散充</span></td><td><span class="price-val" style="color:#3b82f6">¥0.050</span></td><td><span class="score-badge score-high">100.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥10→$10余额；0.05x倍率</td><td>$200</td><td>¥10</td></tr>
+<tr class="package-row" data-card-type="月卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">2</td><td><strong>666ai.top</strong></td><td>Codex Core 月卡</td><td><span class="badge card-type-badge">月卡</span></td><td><span class="price-val" style="color:#3b82f6">¥0.047</span></td><td><span class="score-badge score-high">97.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥30/30天；月限额$32；0.05x倍率</td><td>$640/月</td><td>¥30</td></tr>
+<tr class="package-row" data-card-type="月卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">3</td><td><strong>666ai.top</strong></td><td>Codex Plus 月卡</td><td><span class="badge card-type-badge">月卡</span></td><td><span class="price-val" style="color:#3b82f6">¥0.047</span></td><td><span class="score-badge score-high">97.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥50/30天；月限额$53；0.05x倍率</td><td>$1,060/月</td><td>¥50</td></tr>
+<tr class="package-row" data-card-type="月卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">4</td><td><strong>666ai.top</strong></td><td>Codex Pro 月卡</td><td><span class="badge card-type-badge">月卡</span></td><td><span class="price-val" style="color:#3b82f6">¥0.048</span></td><td><span class="score-badge score-high">97.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥100/30天；月限额$105；0.05x倍率</td><td>$2,100/月</td><td>¥100</td></tr>
+<tr class="package-row" data-card-type="月卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">5</td><td><strong>666ai.top</strong></td><td>Codex Max 月卡</td><td><span class="badge card-type-badge">月卡</span></td><td><span class="price-val" style="color:#3b82f6">¥0.048</span></td><td><span class="score-badge score-high">97.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥200/30天；月限额$210；0.05x倍率</td><td>$4,200/月</td><td>¥200</td></tr>
+<tr class="package-row" data-card-type="月卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">6</td><td><strong>666ai.top</strong></td><td>Codex Ultra 月卡</td><td><span class="badge card-type-badge">月卡</span></td><td><span class="price-val" style="color:#3b82f6">¥0.048</span></td><td><span class="score-badge score-high">97.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥400/30天；月限额$420；0.05x倍率</td><td>$8,400/月</td><td>¥400</td></tr>
+<tr class="package-row" data-card-type="月卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">7</td><td><strong>666ai.top</strong></td><td>Codex Infinite 月卡</td><td><span class="badge card-type-badge">月卡</span></td><td><span class="price-val" style="color:#3b82f6">¥0.048</span></td><td><span class="score-badge score-high">97.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥1000/30天；月限额$1050；0.05x倍率</td><td>$21,000/月</td><td>¥1,000</td></tr>
+<tr class="package-row" data-card-type="月卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">8</td><td><strong>UniVibe</strong></td><td>Air-PRO（按恢复上限）</td><td><span class="badge card-type-badge">月卡</span></td><td><span class="price-val" style="color:#3b82f6">¥0.084</span></td><td><span class="score-badge score-high">95.4 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">$15/月；约727200积分/月</td><td>$1,212/月</td><td>¥102.22</td></tr>
+<tr class="package-row" data-card-type="散充"><td class="brawl-rank" style="font-weight:bold;color:#64748b">9</td><td><strong>u3u.dev</strong></td><td>散充300刀</td><td><span class="badge card-type-badge">散充</span></td><td><span class="price-val" style="color:#f59e0b">¥0.166</span></td><td><span class="score-badge score-high">94.4 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥49.9买$300余额；永不过期</td><td>$300</td><td>¥49.90</td></tr>
+<tr class="package-row" data-card-type="散充"><td class="brawl-rank" style="font-weight:bold;color:#64748b">10</td><td><strong>u3u.dev</strong></td><td>散充200刀</td><td><span class="badge card-type-badge">散充</span></td><td><span class="price-val" style="color:#f59e0b">¥0.183</span></td><td><span class="score-badge score-high">93.6 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥36.6买$200余额；永不过期</td><td>$200</td><td>¥36.60</td></tr>
+<tr class="package-row" data-card-type="周卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">11</td><td><strong>krill-ai.com</strong></td><td>尊享周卡（10人团）</td><td><span class="badge card-type-badge">周卡</span></td><td><span class="price-val" style="color:#3b82f6">¥0.030</span></td><td><span class="score-badge score-high">93.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥166/周；$1120额度</td><td>$5,600/周</td><td>¥166</td></tr>
+<tr class="package-row" data-card-type="周卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">12</td><td><strong>krill-ai.com</strong></td><td>尊享周卡（单买）</td><td><span class="badge card-type-badge">周卡</span></td><td><span class="price-val" style="color:#3b82f6">¥0.040</span></td><td><span class="score-badge score-high">93.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥166/周；$840额度</td><td>$4,200/周</td><td>¥166</td></tr>
+<tr class="package-row" data-card-type="月卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">13</td><td><strong>UniVibe</strong></td><td>Air-PRO（按恢复下限）</td><td><span class="badge card-type-badge">月卡</span></td><td><span class="price-val" style="color:#f59e0b">¥0.134</span></td><td><span class="score-badge score-high">92.9 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">$15/月；约457200积分/月</td><td>$762/月</td><td>¥102.22</td></tr>
+<tr class="package-row" data-card-type="散充"><td class="brawl-rank" style="font-weight:bold;color:#64748b">14</td><td><strong>u3u.dev</strong></td><td>散充100刀</td><td><span class="badge card-type-badge">散充</span></td><td><span class="price-val" style="color:#f59e0b">¥0.200</span></td><td><span class="score-badge score-high">92.8 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥20买$100余额；永不过期</td><td>$100</td><td>¥20</td></tr>
+<tr class="package-row" data-card-type="散充"><td class="brawl-rank" style="font-weight:bold;color:#64748b">15</td><td><strong>chaoye.xyz</strong></td><td>散充（GPT 最低倍率）</td><td><span class="badge card-type-badge">散充</span></td><td><span class="price-val" style="color:#f59e0b">¥0.200</span></td><td><span class="score-badge score-high">92.8 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥1=1余额；GPT倍率0.2x</td><td>$5</td><td>¥1</td></tr>
+<tr class="package-row" data-card-type="月卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">16</td><td><strong>菜虚坤</strong></td><td>Pro顶配月卡</td><td><span class="badge card-type-badge">月卡</span></td><td><span class="price-val" style="color:#f59e0b">¥0.141</span></td><td><span class="score-badge score-high">92.6 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥169/月；$1800额度</td><td>$1,200/月</td><td>¥169</td></tr>
+<tr class="package-row" data-card-type="月卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">17</td><td><strong>菜虚坤</strong></td><td>GPT-Plus编程月卡</td><td><span class="badge card-type-badge">月卡</span></td><td><span class="price-val" style="color:#f59e0b">¥0.150</span></td><td><span class="score-badge score-high">92.2 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥60/月；$600额度</td><td>$400/月</td><td>¥60</td></tr>
+<tr class="package-row" data-card-type="月卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">18</td><td><strong>菜虚坤</strong></td><td>GPT-Lite尝鲜月卡</td><td><span class="badge card-type-badge">月卡</span></td><td><span class="price-val" style="color:#f59e0b">¥0.150</span></td><td><span class="score-badge score-high">92.2 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥20/月；$200额度</td><td>$133.33/月</td><td>¥20</td></tr>
+<tr class="package-row" data-card-type="年卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">19</td><td><strong>ai.input.im</strong></td><td>Air年度</td><td><span class="badge card-type-badge">年卡</span></td><td><span class="price-val" style="color:#3b82f6">¥0.012</span></td><td><span class="score-badge score-high">90.0 分</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td style="font-size:0.85rem;color:#475569">$189/年；日限$300；1x倍率</td><td>$109,500/年</td><td>¥1,285.20</td></tr>
+<tr class="package-row" data-card-type="年卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">20</td><td><strong>ai.input.im</strong></td><td>Lite年度</td><td><span class="badge card-type-badge">年卡</span></td><td><span class="price-val" style="color:#3b82f6">¥0.016</span></td><td><span class="score-badge score-high">90.0 分</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td style="font-size:0.85rem;color:#475569">$87/年；日限$100；1x倍率</td><td>$36,500/年</td><td>¥591.60</td></tr>
+<tr class="package-row" data-card-type="季卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">21</td><td><strong>ai.input.im</strong></td><td>Air季度</td><td><span class="badge card-type-badge">季卡</span></td><td><span class="price-val" style="color:#3b82f6">¥0.022</span></td><td><span class="score-badge score-high">90.0 分</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td style="font-size:0.85rem;color:#475569">$89/季；日限$300；1x倍率</td><td>$27,000/季</td><td>¥605.20</td></tr>
+<tr class="package-row" data-card-type="季卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">22</td><td><strong>ai.input.im</strong></td><td>Max季度</td><td><span class="badge card-type-badge">季卡</span></td><td><span class="price-val" style="color:#3b82f6">¥0.033</span></td><td><span class="score-badge score-high">90.0 分</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td style="font-size:0.85rem;color:#475569">$189/季；周限$3000；1x倍率</td><td>$38,571/季</td><td>¥1,285.20</td></tr>
+<tr class="package-row" data-card-type="月卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">23</td><td><strong>ai.input.im</strong></td><td>Air月度</td><td><span class="badge card-type-badge">月卡</span></td><td><span class="price-val" style="color:#3b82f6">¥0.036</span></td><td><span class="score-badge score-high">90.0 分</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td style="font-size:0.85rem;color:#475569">$47/月；日限$300；1x倍率</td><td>$9,000/月</td><td>¥319.60</td></tr>
+<tr class="package-row" data-card-type="月卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">24</td><td><strong>ai.input.im</strong></td><td>Max月度</td><td><span class="badge card-type-badge">月卡</span></td><td><span class="price-val" style="color:#3b82f6">¥0.036</span></td><td><span class="score-badge score-high">90.0 分</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td style="font-size:0.85rem;color:#475569">$69/月；周限$3000；1x倍率</td><td>$12,857/月</td><td>¥469.20</td></tr>
+<tr class="package-row" data-card-type="月卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">25</td><td><strong>ai.input.im</strong></td><td>Lite月度</td><td><span class="badge card-type-badge">月卡</span></td><td><span class="price-val" style="color:#3b82f6">¥0.043</span></td><td><span class="score-badge score-high">90.0 分</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td style="font-size:0.85rem;color:#475569">$19/月；日限$100；1x倍率</td><td>$3,000/月</td><td>¥129.20</td></tr>
+<tr class="package-row" data-card-type="季卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">26</td><td><strong>u3u.dev</strong></td><td>季卡10000刀</td><td><span class="badge card-type-badge">季卡</span></td><td><span class="price-val" style="color:#3b82f6">¥0.060</span></td><td><span class="score-badge score-high">89.5 分</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td style="font-size:0.85rem;color:#475569">¥600/季；$10000额度；日限$200</td><td>$10,000/季</td><td>¥600</td></tr>
+<tr class="package-row" data-card-type="季卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">27</td><td><strong>u3u.dev</strong></td><td>季卡20000刀</td><td><span class="badge card-type-badge">季卡</span></td><td><span class="price-val" style="color:#3b82f6">¥0.060</span></td><td><span class="score-badge score-high">89.5 分</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td style="font-size:0.85rem;color:#475569">¥1200/季；$20000额度；日限$600</td><td>$20,000/季</td><td>¥1,200</td></tr>
+<tr class="package-row" data-card-type="月卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">28</td><td><strong>u3u.dev</strong></td><td>月卡2500刀</td><td><span class="badge card-type-badge">月卡</span></td><td><span class="price-val" style="color:#3b82f6">¥0.072</span></td><td><span class="score-badge score-high">88.9 分</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td style="font-size:0.85rem;color:#475569">¥180/月；$2500额度；日限$200</td><td>$2,500/月</td><td>¥180</td></tr>
+<tr class="package-row" data-card-type="月卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">29</td><td><strong>u3u.dev</strong></td><td>月卡5000刀</td><td><span class="badge card-type-badge">月卡</span></td><td><span class="price-val" style="color:#3b82f6">¥0.072</span></td><td><span class="score-badge score-high">88.9 分</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td style="font-size:0.85rem;color:#475569">¥360/月；$5000额度；日限$600</td><td>$5,000/月</td><td>¥360</td></tr>
+<tr class="package-row" data-card-type="月卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">30</td><td><strong>u3u.dev</strong></td><td>月卡1200刀</td><td><span class="badge card-type-badge">月卡</span></td><td><span class="price-val" style="color:#3b82f6">¥0.073</span></td><td><span class="score-badge score-high">88.9 分</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td style="font-size:0.85rem;color:#475569">¥88/月；$1200额度；日限$100</td><td>$1,200/月</td><td>¥88</td></tr>
+<tr class="package-row" data-card-type="散充"><td class="brawl-rank" style="font-weight:bold;color:#64748b">31</td><td><strong>FreeModel.dev</strong></td><td>散充</td><td><span class="badge card-type-badge">散充</span></td><td><span class="price-val" style="color:#f59e0b">¥0.285</span></td><td><span class="score-badge score-high">88.7 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">$100余额实付32.81HKD(≈3GBP)</td><td>$100</td><td>¥28.51</td></tr>
+<tr class="package-row" data-card-type="月卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">32</td><td><strong>UniVibe</strong></td><td>Air-PRO（保守口径）</td><td><span class="badge card-type-badge">月卡</span></td><td><span class="price-val" style="color:#f59e0b">¥0.227</span></td><td><span class="score-badge score-high">88.5 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">$15/月；按270000积分/月算</td><td>$450/月</td><td>¥102.22</td></tr>
+<tr class="package-row" data-card-type="日卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">33</td><td><strong>krill-ai.com</strong></td><td>轻享天卡（10人团）</td><td><span class="badge card-type-badge">日卡</span></td><td><span class="price-val" style="color:#3b82f6">¥0.030</span></td><td><span class="score-badge score-high">88.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥12/天；$80额度</td><td>$400/天</td><td>¥12</td></tr>
+<tr class="package-row" data-card-type="日卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">34</td><td><strong>krill-ai.com</strong></td><td>尊享天卡（10人团）</td><td><span class="badge card-type-badge">日卡</span></td><td><span class="price-val" style="color:#3b82f6">¥0.030</span></td><td><span class="score-badge score-high">88.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥24/天；$160额度</td><td>$800/天</td><td>¥24</td></tr>
+<tr class="package-row" data-card-type="日卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">35</td><td><strong>krill-ai.com</strong></td><td>轻享天卡（单买）</td><td><span class="badge card-type-badge">日卡</span></td><td><span class="price-val" style="color:#3b82f6">¥0.040</span></td><td><span class="score-badge score-high">88.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥12/天；$60额度</td><td>$300/天</td><td>¥12</td></tr>
+<tr class="package-row" data-card-type="日卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">36</td><td><strong>krill-ai.com</strong></td><td>尊享天卡（单买）</td><td><span class="badge card-type-badge">日卡</span></td><td><span class="price-val" style="color:#3b82f6">¥0.040</span></td><td><span class="score-badge score-high">88.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥24/天；$120额度</td><td>$600/天</td><td>¥24</td></tr>
+<tr class="package-row" data-card-type="散充"><td class="brawl-rank" style="font-weight:bold;color:#64748b">37</td><td><strong>autocode.space</strong></td><td>散充（GPT-5.5）</td><td><span class="badge card-type-badge">散充</span></td><td><span class="price-val" style="color:#f59e0b">¥0.300</span></td><td><span class="score-badge score-high">87.9 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥1=$1余额；input$1.5/output$9/cached$0.15/1M</td><td>$3.33</td><td>¥1</td></tr>
+<tr class="package-row" data-card-type="散充"><td class="brawl-rank" style="font-weight:bold;color:#64748b">38</td><td><strong>relayai.asia</strong></td><td>散充（满¥5000赠$1500）</td><td><span class="badge card-type-badge">散充</span></td><td><span class="price-val" style="color:#f59e0b">¥0.385</span></td><td><span class="score-badge score-high">83.8 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥5000→$6500余额；Codex 0.5x倍率</td><td>$13,000</td><td>¥5,000</td></tr>
+<tr class="package-row" data-card-type="周卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">39</td><td><strong>u3u.dev</strong></td><td>周卡300刀</td><td><span class="badge card-type-badge">周卡</span></td><td><span class="price-val" style="color:#22c55e">¥0.100</span></td><td><span class="score-badge score-high">83.6 分</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td style="font-size:0.85rem;color:#475569">¥30/周；$300额度；日限$300</td><td>$300/周</td><td>¥30</td></tr>
+<tr class="package-row" data-card-type="周卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">40</td><td><strong>u3u.dev</strong></td><td>周卡500刀</td><td><span class="badge card-type-badge">周卡</span></td><td><span class="price-val" style="color:#22c55e">¥0.100</span></td><td><span class="score-badge score-high">83.6 分</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td style="font-size:0.85rem;color:#475569">¥50/周；$500额度；日限$500</td><td>$500/周</td><td>¥50</td></tr>
+<tr class="package-row" data-card-type="散充"><td class="brawl-rank" style="font-weight:bold;color:#64748b">41</td><td><strong>chaoye.xyz</strong></td><td>散充（GPT 最高倍率）</td><td><span class="badge card-type-badge">散充</span></td><td><span class="price-val" style="color:#f59e0b">¥0.400</span></td><td><span class="score-badge score-high">83.1 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥1=1余额；GPT倍率0.4x</td><td>$2.50</td><td>¥1</td></tr>
+<tr class="package-row" data-card-type="散充"><td class="brawl-rank" style="font-weight:bold;color:#64748b">42</td><td><strong>relayai.asia</strong></td><td>散充（满¥500赠$88）</td><td><span class="badge card-type-badge">散充</span></td><td><span class="price-val" style="color:#f59e0b">¥0.425</span></td><td><span class="score-badge score-high">81.9 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥500→$588余额；Codex 0.5x倍率</td><td>$1,176</td><td>¥500</td></tr>
+<tr class="package-row" data-card-type="散充"><td class="brawl-rank" style="font-weight:bold;color:#64748b">43</td><td><strong>link-ai.cc</strong></td><td>散充$500（GPT-5.5 default分组）</td><td><span class="badge card-type-badge">散充</span></td><td><span class="price-val" style="color:#f59e0b">¥0.432</span></td><td><span class="score-badge score-high">81.6 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥360买$500余额(8.0折)；同上</td><td>$833.33</td><td>¥360</td></tr>
+<tr class="package-row" data-card-type="散充"><td class="brawl-rank" style="font-weight:bold;color:#64748b">44</td><td><strong>link-ai.cc</strong></td><td>散充$200（GPT-5.5 default分组）</td><td><span class="badge card-type-badge">散充</span></td><td><span class="price-val" style="color:#f59e0b">¥0.459</span></td><td><span class="score-badge score-high">80.3 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥153买$200余额(8.5折)；同上</td><td>$333.33</td><td>¥153</td></tr>
+<tr class="package-row" data-card-type="散充"><td class="brawl-rank" style="font-weight:bold;color:#64748b">45</td><td><strong>relayai.asia</strong></td><td>散充（无赠送）</td><td><span class="badge card-type-badge">散充</span></td><td><span class="price-val" style="color:#ef4444">¥0.500</span></td><td><span class="score-badge score-medium">78.3 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥1=$1余额；Codex 0.5x倍率</td><td>$2</td><td>¥1</td></tr>
+<tr class="package-row" data-card-type="月卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">46</td><td><strong>FreeModel.dev</strong></td><td>套餐 Pro</td><td><span class="badge card-type-badge">月卡</span></td><td><span class="price-val" style="color:#f59e0b">¥0.160</span></td><td><span class="score-badge score-medium">76.7 分</span></td><td><span class="badge" style="background:#ef4444">🔗 恶犬</span></td><td style="font-size:0.85rem;color:#475569">£5/月；每5小时$10额度，每7天$67额度</td><td>$287.14/月</td><td>¥46.06</td></tr>
+<tr class="package-row" data-card-type="月卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">47</td><td><strong>FreeModel.dev</strong></td><td>套餐 Pro+</td><td><span class="badge card-type-badge">月卡</span></td><td><span class="price-val" style="color:#f59e0b">¥0.163</span></td><td><span class="score-badge score-medium">76.5 分</span></td><td><span class="badge" style="background:#ef4444">🔗 恶犬</span></td><td style="font-size:0.85rem;color:#475569">£10/月；每5小时$20额度，每7天$132额度</td><td>$565.71/月</td><td>¥92.12</td></tr>
+<tr class="package-row" data-card-type="月卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">48</td><td><strong>FreeModel.dev</strong></td><td>套餐 Max</td><td><span class="badge card-type-badge">月卡</span></td><td><span class="price-val" style="color:#f59e0b">¥0.163</span></td><td><span class="score-badge score-medium">76.5 分</span></td><td><span class="badge" style="background:#ef4444">🔗 恶犬</span></td><td style="font-size:0.85rem;color:#475569">£20/月；每5小时$40额度，每7天$264额度</td><td>$1,131.43/月</td><td>¥184.24</td></tr>
+<tr class="package-row" data-card-type="月卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">49</td><td><strong>FreeModel.dev</strong></td><td>套餐 Ultra</td><td><span class="badge card-type-badge">月卡</span></td><td><span class="price-val" style="color:#f59e0b">¥0.163</span></td><td><span class="score-badge score-medium">76.5 分</span></td><td><span class="badge" style="background:#ef4444">🔗 恶犬</span></td><td style="font-size:0.85rem;color:#475569">£100/月；每5小时$200额度，每7天$1320额度</td><td>$5,657.14/月</td><td>¥921.20</td></tr>
+<tr class="package-row" data-card-type="月卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">50</td><td><strong>FreeModel.dev</strong></td><td>套餐 Power</td><td><span class="badge card-type-badge">月卡</span></td><td><span class="price-val" style="color:#f59e0b">¥0.163</span></td><td><span class="score-badge score-medium">76.5 分</span></td><td><span class="badge" style="background:#ef4444">🔗 恶犬</span></td><td style="font-size:0.85rem;color:#475569">£200/月；每5小时$400额度，每7天$2640额度</td><td>$11,314.29/月</td><td>¥1,842.41</td></tr>
+<tr class="package-row" data-card-type="散充"><td class="brawl-rank" style="font-weight:bold;color:#64748b">51</td><td><strong>link-ai.cc</strong></td><td>散充$100（GPT-5.5 default分组）</td><td><span class="badge card-type-badge">散充</span></td><td><span class="price-val" style="color:#ef4444">¥0.540</span></td><td><span class="score-badge score-medium">76.3 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥90买$100余额；input$3/output$18/1M</td><td>$166.67</td><td>¥90</td></tr>
+<tr class="package-row" data-card-type="散充"><td class="brawl-rank" style="font-weight:bold;color:#64748b">52</td><td><strong>link-ai.cc</strong></td><td>散充$500（GPT-5.5 Codex旗舰分组）</td><td><span class="badge card-type-badge">散充</span></td><td><span class="price-val" style="color:#ef4444">¥0.562</span></td><td><span class="score-badge score-medium">75.3 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥360买$500余额(8.0折)；同上</td><td>$641.03</td><td>¥360</td></tr>
+<tr class="package-row" data-card-type="散充"><td class="brawl-rank" style="font-weight:bold;color:#64748b">53</td><td><strong>link-ai.cc</strong></td><td>散充$200（GPT-5.5 Codex旗舰分组）</td><td><span class="badge card-type-badge">散充</span></td><td><span class="price-val" style="color:#ef4444">¥0.597</span></td><td><span class="score-badge score-medium">73.6 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥153买$200余额(8.5折)；同上</td><td>$256.41</td><td>¥153</td></tr>
+<tr class="package-row" data-card-type="散充"><td class="brawl-rank" style="font-weight:bold;color:#64748b">54</td><td><strong>link-ai.cc</strong></td><td>散充$100（GPT-5.5 Codex旗舰分组）</td><td><span class="badge card-type-badge">散充</span></td><td><span class="price-val" style="color:#ef4444">¥0.702</span></td><td><span class="score-badge score-medium">68.5 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥90买$100余额；input$3.9/output$23.4/1M</td><td>$128.21</td><td>¥90</td></tr>
+<tr class="package-row" data-card-type="月卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">55</td><td><strong>HyperAPI.cc</strong></td><td>月卡（推荐）</td><td><span class="badge card-type-badge">月卡</span></td><td><span class="price-val" style="color:#ef4444">¥1.273</span></td><td><span class="score-badge score-low">38.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">$59.90/月；额度$480</td><td>$320/月</td><td>¥407.32</td></tr>
+<tr class="package-row" data-card-type="周卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">56</td><td><strong>HyperAPI.cc</strong></td><td>周卡</td><td><span class="badge card-type-badge">周卡</span></td><td><span class="price-val" style="color:#ef4444">¥1.352</span></td><td><span class="score-badge score-low">30.1 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">$15.90/7天；额度$120</td><td>$80/周期</td><td>¥108.12</td></tr>
+<tr class="package-row" data-card-type="月卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">57</td><td><strong>HyperAPI.cc</strong></td><td>月卡轻量</td><td><span class="badge card-type-badge">月卡</span></td><td><span class="price-val" style="color:#ef4444">¥1.696</span></td><td><span class="score-badge score-low">27.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">$39.90/月；额度$240</td><td>$160/月</td><td>¥271.32</td></tr>
+<tr class="package-row" data-card-type="日卡"><td class="brawl-rank" style="font-weight:bold;color:#64748b">58</td><td><strong>HyperAPI.cc</strong></td><td>日卡</td><td><span class="badge card-type-badge">日卡</span></td><td><span class="price-val" style="color:#ef4444">¥1.479</span></td><td><span class="score-badge score-low">19.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">$2.90/天；额度$20</td><td>$13.33/周期</td><td>¥19.72</td></tr>
 </tbody></table></div>
 <h2>评级标准说明</h2>
 <div class="criteria-grid">
@@ -109,31 +237,32 @@ tbody tr:hover{background:#e2e8f0}
 <tr><td>仅周（7天）限额</td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td></tr>
 <tr><td>有日限 / 5h限额</td><td><span class="badge" style="background:#ef4444">🔗 恶犬</span></td></tr>
 </tbody></table>
+<div class="warning-tip">⚠️ 日/周限额若折合每日额度&gt; $50 官方等值，则会宽免至“不太地道”。</div>
 </div>
 
 </div>
 <h2>供应商详情</h2>
-<div class="vendor-card" id="vendor-1">
+<div class="vendor-card" id="vendor-1" data-vendor-name="ai.input.im">
 <h3>ai.input.im <span class="badge" style="background:#3b82f6">捡漏 ¥0.012</span></h3>
 <div class="ratings">
   <div class="rating-item"><span class="rating-label">定价：</span><span class="badge" style="background:#3b82f6">捡漏</span></div>
   <div class="rating-item"><span class="rating-label">周期：</span><span class="badge" style="background:#3b82f6">📅 合适</span></div>
-  <div class="rating-item"><span class="rating-label">限额：</span><span class="badge" style="background:#ef4444">🔗 恶犬</span></div>
+  <div class="rating-item"><span class="rating-label">限额：</span><span class="badge" style="background:#f59e0b">🚧 不太地道</span></div>
 </div>
-<div class="comment">折合定价低至¥0.012堪称捡漏，需警惕额度是否用得完，月卡+周期合理、使用充裕，存在日限或5h限额体验受损，提供7种套餐选择丰富。综合可以考虑，注意短板。</div>
+<div class="comment">折合定价低至¥0.012堪称捡漏，需警惕额度是否用得完，月卡+周期合理、使用充裕，存在周限额使用受限，提供7种套餐选择丰富。综合可以考虑，注意短板。</div>
 <div class="table-wrap"><table>
-<thead><tr><th>套餐名称</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th><th>折合定价/官方$1</th></tr></thead>
+<thead><tr><th>套餐名称</th><th>卡种</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th><th>评分</th><th>限额</th><th>折合定价/官方$1</th></tr></thead>
 <tbody>
-<tr><td>Air年度</td><td>$189/年；日限$300；1x倍率</td><td>$109,500/年</td><td>¥1,285.20</td><td><span class="price-val" style="color:#3b82f6">¥0.012</span></td></tr>
-<tr><td>Lite年度</td><td>$87/年；日限$100；1x倍率</td><td>$36,500/年</td><td>¥591.60</td><td><span class="price-val" style="color:#3b82f6">¥0.016</span></td></tr>
-<tr><td>Air季度</td><td>$89/季；日限$300；1x倍率</td><td>$27,000/季</td><td>¥605.20</td><td><span class="price-val" style="color:#3b82f6">¥0.022</span></td></tr>
-<tr><td>Max季度</td><td>$189/季；周限$3000；1x倍率</td><td>$38,571/季</td><td>¥1,285.20</td><td><span class="price-val" style="color:#3b82f6">¥0.033</span></td></tr>
-<tr><td>Air月度</td><td>$47/月；日限$300；1x倍率</td><td>$9,000/月</td><td>¥319.60</td><td><span class="price-val" style="color:#3b82f6">¥0.036</span></td></tr>
-<tr><td>Max月度</td><td>$69/月；周限$3000；1x倍率</td><td>$12,857/月</td><td>¥469.20</td><td><span class="price-val" style="color:#3b82f6">¥0.036</span></td></tr>
-<tr><td>Lite月度</td><td>$19/月；日限$100；1x倍率</td><td>$3,000/月</td><td>¥129.20</td><td><span class="price-val" style="color:#3b82f6">¥0.043</span></td></tr>
+<tr class="package-row" data-card-type="年卡"><td><strong>Air年度</strong></td><td><span class="badge card-type-badge">年卡</span></td><td>$189/年；日限$300；1x倍率</td><td>$109,500/年</td><td>¥1,285.20</td><td><span class="score-badge score-high">90.0 分</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td><span class="price-val" style="color:#3b82f6">¥0.012</span></td></tr>
+<tr class="package-row" data-card-type="年卡"><td><strong>Lite年度</strong></td><td><span class="badge card-type-badge">年卡</span></td><td>$87/年；日限$100；1x倍率</td><td>$36,500/年</td><td>¥591.60</td><td><span class="score-badge score-high">90.0 分</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td><span class="price-val" style="color:#3b82f6">¥0.016</span></td></tr>
+<tr class="package-row" data-card-type="季卡"><td><strong>Air季度</strong></td><td><span class="badge card-type-badge">季卡</span></td><td>$89/季；日限$300；1x倍率</td><td>$27,000/季</td><td>¥605.20</td><td><span class="score-badge score-high">90.0 分</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td><span class="price-val" style="color:#3b82f6">¥0.022</span></td></tr>
+<tr class="package-row" data-card-type="季卡"><td><strong>Max季度</strong></td><td><span class="badge card-type-badge">季卡</span></td><td>$189/季；周限$3000；1x倍率</td><td>$38,571/季</td><td>¥1,285.20</td><td><span class="score-badge score-high">90.0 分</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td><span class="price-val" style="color:#3b82f6">¥0.033</span></td></tr>
+<tr class="package-row" data-card-type="月卡"><td><strong>Air月度</strong></td><td><span class="badge card-type-badge">月卡</span></td><td>$47/月；日限$300；1x倍率</td><td>$9,000/月</td><td>¥319.60</td><td><span class="score-badge score-high">90.0 分</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td><span class="price-val" style="color:#3b82f6">¥0.036</span></td></tr>
+<tr class="package-row" data-card-type="月卡"><td><strong>Max月度</strong></td><td><span class="badge card-type-badge">月卡</span></td><td>$69/月；周限$3000；1x倍率</td><td>$12,857/月</td><td>¥469.20</td><td><span class="score-badge score-high">90.0 分</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td><span class="price-val" style="color:#3b82f6">¥0.036</span></td></tr>
+<tr class="package-row" data-card-type="月卡"><td><strong>Lite月度</strong></td><td><span class="badge card-type-badge">月卡</span></td><td>$19/月；日限$100；1x倍率</td><td>$3,000/月</td><td>¥129.20</td><td><span class="score-badge score-high">90.0 分</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td><span class="price-val" style="color:#3b82f6">¥0.043</span></td></tr>
 </tbody></table></div>
 </div>
-<div class="vendor-card" id="vendor-2">
+<div class="vendor-card" id="vendor-2" data-vendor-name="krill-ai.com">
 <h3>krill-ai.com <span class="badge" style="background:#3b82f6">捡漏 ¥0.030</span></h3>
 <div class="ratings">
   <div class="rating-item"><span class="rating-label">定价：</span><span class="badge" style="background:#3b82f6">捡漏</span></div>
@@ -142,17 +271,17 @@ tbody tr:hover{background:#e2e8f0}
 </div>
 <div class="comment">折合定价低至¥0.030堪称捡漏，需警惕额度是否用得完，仅有周卡可选，需把握使用节奏，无恶性限额整体友好，提供6种套餐选择丰富。综合可以考虑，注意短板。</div>
 <div class="table-wrap"><table>
-<thead><tr><th>套餐名称</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th><th>折合定价/官方$1</th></tr></thead>
+<thead><tr><th>套餐名称</th><th>卡种</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th><th>评分</th><th>限额</th><th>折合定价/官方$1</th></tr></thead>
 <tbody>
-<tr><td>轻享天卡（10人团）</td><td>¥12/天；$80额度</td><td>$400/天</td><td>¥12</td><td><span class="price-val" style="color:#3b82f6">¥0.030</span></td></tr>
-<tr><td>尊享天卡（10人团）</td><td>¥24/天；$160额度</td><td>$800/天</td><td>¥24</td><td><span class="price-val" style="color:#3b82f6">¥0.030</span></td></tr>
-<tr><td>尊享周卡（10人团）</td><td>¥166/周；$1120额度</td><td>$5,600/周</td><td>¥166</td><td><span class="price-val" style="color:#3b82f6">¥0.030</span></td></tr>
-<tr><td>轻享天卡（单买）</td><td>¥12/天；$60额度</td><td>$300/天</td><td>¥12</td><td><span class="price-val" style="color:#3b82f6">¥0.040</span></td></tr>
-<tr><td>尊享天卡（单买）</td><td>¥24/天；$120额度</td><td>$600/天</td><td>¥24</td><td><span class="price-val" style="color:#3b82f6">¥0.040</span></td></tr>
-<tr><td>尊享周卡（单买）</td><td>¥166/周；$840额度</td><td>$4,200/周</td><td>¥166</td><td><span class="price-val" style="color:#3b82f6">¥0.040</span></td></tr>
+<tr class="package-row" data-card-type="日卡"><td><strong>轻享天卡（10人团）</strong></td><td><span class="badge card-type-badge">日卡</span></td><td>¥12/天；$80额度</td><td>$400/天</td><td>¥12</td><td><span class="score-badge score-high">88.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#3b82f6">¥0.030</span></td></tr>
+<tr class="package-row" data-card-type="日卡"><td><strong>尊享天卡（10人团）</strong></td><td><span class="badge card-type-badge">日卡</span></td><td>¥24/天；$160额度</td><td>$800/天</td><td>¥24</td><td><span class="score-badge score-high">88.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#3b82f6">¥0.030</span></td></tr>
+<tr class="package-row" data-card-type="周卡"><td><strong>尊享周卡（10人团）</strong></td><td><span class="badge card-type-badge">周卡</span></td><td>¥166/周；$1120额度</td><td>$5,600/周</td><td>¥166</td><td><span class="score-badge score-high">93.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#3b82f6">¥0.030</span></td></tr>
+<tr class="package-row" data-card-type="日卡"><td><strong>轻享天卡（单买）</strong></td><td><span class="badge card-type-badge">日卡</span></td><td>¥12/天；$60额度</td><td>$300/天</td><td>¥12</td><td><span class="score-badge score-high">88.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#3b82f6">¥0.040</span></td></tr>
+<tr class="package-row" data-card-type="日卡"><td><strong>尊享天卡（单买）</strong></td><td><span class="badge card-type-badge">日卡</span></td><td>¥24/天；$120额度</td><td>$600/天</td><td>¥24</td><td><span class="score-badge score-high">88.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#3b82f6">¥0.040</span></td></tr>
+<tr class="package-row" data-card-type="周卡"><td><strong>尊享周卡（单买）</strong></td><td><span class="badge card-type-badge">周卡</span></td><td>¥166/周；$840额度</td><td>$4,200/周</td><td>¥166</td><td><span class="score-badge score-high">93.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#3b82f6">¥0.040</span></td></tr>
 </tbody></table></div>
 </div>
-<div class="vendor-card" id="vendor-3">
+<div class="vendor-card" id="vendor-3" data-vendor-name="666ai.top">
 <h3>666ai.top <span class="badge" style="background:#3b82f6">捡漏 ¥0.047</span></h3>
 <div class="ratings">
   <div class="rating-item"><span class="rating-label">定价：</span><span class="badge" style="background:#3b82f6">捡漏</span></div>
@@ -161,41 +290,41 @@ tbody tr:hover{background:#e2e8f0}
 </div>
 <div class="comment">折合定价低至¥0.047堪称捡漏，需警惕额度是否用得完，散充永不过期是最大加分项，无恶性限额整体友好，提供7种套餐选择丰富。综合表现优秀，值得推荐。</div>
 <div class="table-wrap"><table>
-<thead><tr><th>套餐名称</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th><th>折合定价/官方$1</th></tr></thead>
+<thead><tr><th>套餐名称</th><th>卡种</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th><th>评分</th><th>限额</th><th>折合定价/官方$1</th></tr></thead>
 <tbody>
-<tr><td>Codex Core 月卡</td><td>¥30/30天；月限额$32；0.05x倍率</td><td>$640/月</td><td>¥30</td><td><span class="price-val" style="color:#3b82f6">¥0.047</span></td></tr>
-<tr><td>Codex Plus 月卡</td><td>¥50/30天；月限额$53；0.05x倍率</td><td>$1,060/月</td><td>¥50</td><td><span class="price-val" style="color:#3b82f6">¥0.047</span></td></tr>
-<tr><td>Codex Pro 月卡</td><td>¥100/30天；月限额$105；0.05x倍率</td><td>$2,100/月</td><td>¥100</td><td><span class="price-val" style="color:#3b82f6">¥0.048</span></td></tr>
-<tr><td>Codex Max 月卡</td><td>¥200/30天；月限额$210；0.05x倍率</td><td>$4,200/月</td><td>¥200</td><td><span class="price-val" style="color:#3b82f6">¥0.048</span></td></tr>
-<tr><td>Codex Ultra 月卡</td><td>¥400/30天；月限额$420；0.05x倍率</td><td>$8,400/月</td><td>¥400</td><td><span class="price-val" style="color:#3b82f6">¥0.048</span></td></tr>
-<tr><td>Codex Infinite 月卡</td><td>¥1000/30天；月限额$1050；0.05x倍率</td><td>$21,000/月</td><td>¥1,000</td><td><span class="price-val" style="color:#3b82f6">¥0.048</span></td></tr>
-<tr><td>散充</td><td>¥10→$10余额；0.05x倍率</td><td>$200</td><td>¥10</td><td><span class="price-val" style="color:#3b82f6">¥0.050</span></td></tr>
+<tr class="package-row" data-card-type="月卡"><td><strong>Codex Core 月卡</strong></td><td><span class="badge card-type-badge">月卡</span></td><td>¥30/30天；月限额$32；0.05x倍率</td><td>$640/月</td><td>¥30</td><td><span class="score-badge score-high">97.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#3b82f6">¥0.047</span></td></tr>
+<tr class="package-row" data-card-type="月卡"><td><strong>Codex Plus 月卡</strong></td><td><span class="badge card-type-badge">月卡</span></td><td>¥50/30天；月限额$53；0.05x倍率</td><td>$1,060/月</td><td>¥50</td><td><span class="score-badge score-high">97.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#3b82f6">¥0.047</span></td></tr>
+<tr class="package-row" data-card-type="月卡"><td><strong>Codex Pro 月卡</strong></td><td><span class="badge card-type-badge">月卡</span></td><td>¥100/30天；月限额$105；0.05x倍率</td><td>$2,100/月</td><td>¥100</td><td><span class="score-badge score-high">97.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#3b82f6">¥0.048</span></td></tr>
+<tr class="package-row" data-card-type="月卡"><td><strong>Codex Max 月卡</strong></td><td><span class="badge card-type-badge">月卡</span></td><td>¥200/30天；月限额$210；0.05x倍率</td><td>$4,200/月</td><td>¥200</td><td><span class="score-badge score-high">97.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#3b82f6">¥0.048</span></td></tr>
+<tr class="package-row" data-card-type="月卡"><td><strong>Codex Ultra 月卡</strong></td><td><span class="badge card-type-badge">月卡</span></td><td>¥400/30天；月限额$420；0.05x倍率</td><td>$8,400/月</td><td>¥400</td><td><span class="score-badge score-high">97.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#3b82f6">¥0.048</span></td></tr>
+<tr class="package-row" data-card-type="月卡"><td><strong>Codex Infinite 月卡</strong></td><td><span class="badge card-type-badge">月卡</span></td><td>¥1000/30天；月限额$1050；0.05x倍率</td><td>$21,000/月</td><td>¥1,000</td><td><span class="score-badge score-high">97.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#3b82f6">¥0.048</span></td></tr>
+<tr class="package-row" data-card-type="散充"><td><strong>散充</strong></td><td><span class="badge card-type-badge">散充</span></td><td>¥10→$10余额；0.05x倍率</td><td>$200</td><td>¥10</td><td><span class="score-badge score-high">100.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#3b82f6">¥0.050</span></td></tr>
 </tbody></table></div>
 </div>
-<div class="vendor-card" id="vendor-4">
+<div class="vendor-card" id="vendor-4" data-vendor-name="u3u.dev">
 <h3>u3u.dev <span class="badge" style="background:#3b82f6">捡漏 ¥0.060</span></h3>
 <div class="ratings">
   <div class="rating-item"><span class="rating-label">定价：</span><span class="badge" style="background:#3b82f6">捡漏</span></div>
   <div class="rating-item"><span class="rating-label">周期：</span><span class="badge" style="background:#22c55e">🔓 最佳</span></div>
-  <div class="rating-item"><span class="rating-label">限额：</span><span class="badge" style="background:#ef4444">🔗 恶犬</span></div>
+  <div class="rating-item"><span class="rating-label">限额：</span><span class="badge" style="background:#f59e0b">🚧 不太地道</span></div>
 </div>
-<div class="comment">折合定价低至¥0.060堪称捡漏，需警惕额度是否用得完，散充永不过期是最大加分项，存在日限或5h限额体验受损，提供10种套餐选择丰富。综合可以考虑，注意短板。</div>
+<div class="comment">折合定价低至¥0.060堪称捡漏，需警惕额度是否用得完，散充永不过期是最大加分项，存在周限额使用受限，提供10种套餐选择丰富。综合可以考虑，注意短板。</div>
 <div class="table-wrap"><table>
-<thead><tr><th>套餐名称</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th><th>折合定价/官方$1</th></tr></thead>
+<thead><tr><th>套餐名称</th><th>卡种</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th><th>评分</th><th>限额</th><th>折合定价/官方$1</th></tr></thead>
 <tbody>
-<tr><td>季卡10000刀</td><td>¥600/季；$10000额度；日限$200</td><td>$10,000/季</td><td>¥600</td><td><span class="price-val" style="color:#3b82f6">¥0.060</span></td></tr>
-<tr><td>季卡20000刀</td><td>¥1200/季；$20000额度；日限$600</td><td>$20,000/季</td><td>¥1,200</td><td><span class="price-val" style="color:#3b82f6">¥0.060</span></td></tr>
-<tr><td>月卡2500刀</td><td>¥180/月；$2500额度；日限$200</td><td>$2,500/月</td><td>¥180</td><td><span class="price-val" style="color:#3b82f6">¥0.072</span></td></tr>
-<tr><td>月卡5000刀</td><td>¥360/月；$5000额度；日限$600</td><td>$5,000/月</td><td>¥360</td><td><span class="price-val" style="color:#3b82f6">¥0.072</span></td></tr>
-<tr><td>月卡1200刀</td><td>¥88/月；$1200额度；日限$100</td><td>$1,200/月</td><td>¥88</td><td><span class="price-val" style="color:#3b82f6">¥0.073</span></td></tr>
-<tr><td>周卡300刀</td><td>¥30/周；$300额度；日限$300</td><td>$300/周</td><td>¥30</td><td><span class="price-val" style="color:#22c55e">¥0.100</span></td></tr>
-<tr><td>周卡500刀</td><td>¥50/周；$500额度；日限$500</td><td>$500/周</td><td>¥50</td><td><span class="price-val" style="color:#22c55e">¥0.100</span></td></tr>
-<tr><td>散充300刀</td><td>¥49.9买$300余额；永不过期</td><td>$300</td><td>¥49.90</td><td><span class="price-val" style="color:#f59e0b">¥0.166</span></td></tr>
-<tr><td>散充200刀</td><td>¥36.6买$200余额；永不过期</td><td>$200</td><td>¥36.60</td><td><span class="price-val" style="color:#f59e0b">¥0.183</span></td></tr>
-<tr><td>散充100刀</td><td>¥20买$100余额；永不过期</td><td>$100</td><td>¥20</td><td><span class="price-val" style="color:#f59e0b">¥0.200</span></td></tr>
+<tr class="package-row" data-card-type="季卡"><td><strong>季卡10000刀</strong></td><td><span class="badge card-type-badge">季卡</span></td><td>¥600/季；$10000额度；日限$200</td><td>$10,000/季</td><td>¥600</td><td><span class="score-badge score-high">89.5 分</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td><span class="price-val" style="color:#3b82f6">¥0.060</span></td></tr>
+<tr class="package-row" data-card-type="季卡"><td><strong>季卡20000刀</strong></td><td><span class="badge card-type-badge">季卡</span></td><td>¥1200/季；$20000额度；日限$600</td><td>$20,000/季</td><td>¥1,200</td><td><span class="score-badge score-high">89.5 分</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td><span class="price-val" style="color:#3b82f6">¥0.060</span></td></tr>
+<tr class="package-row" data-card-type="月卡"><td><strong>月卡2500刀</strong></td><td><span class="badge card-type-badge">月卡</span></td><td>¥180/月；$2500额度；日限$200</td><td>$2,500/月</td><td>¥180</td><td><span class="score-badge score-high">88.9 分</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td><span class="price-val" style="color:#3b82f6">¥0.072</span></td></tr>
+<tr class="package-row" data-card-type="月卡"><td><strong>月卡5000刀</strong></td><td><span class="badge card-type-badge">月卡</span></td><td>¥360/月；$5000额度；日限$600</td><td>$5,000/月</td><td>¥360</td><td><span class="score-badge score-high">88.9 分</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td><span class="price-val" style="color:#3b82f6">¥0.072</span></td></tr>
+<tr class="package-row" data-card-type="月卡"><td><strong>月卡1200刀</strong></td><td><span class="badge card-type-badge">月卡</span></td><td>¥88/月；$1200额度；日限$100</td><td>$1,200/月</td><td>¥88</td><td><span class="score-badge score-high">88.9 分</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td><span class="price-val" style="color:#3b82f6">¥0.073</span></td></tr>
+<tr class="package-row" data-card-type="周卡"><td><strong>周卡300刀</strong></td><td><span class="badge card-type-badge">周卡</span></td><td>¥30/周；$300额度；日限$300</td><td>$300/周</td><td>¥30</td><td><span class="score-badge score-high">83.6 分</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td><span class="price-val" style="color:#22c55e">¥0.100</span></td></tr>
+<tr class="package-row" data-card-type="周卡"><td><strong>周卡500刀</strong></td><td><span class="badge card-type-badge">周卡</span></td><td>¥50/周；$500额度；日限$500</td><td>$500/周</td><td>¥50</td><td><span class="score-badge score-high">83.6 分</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td><span class="price-val" style="color:#22c55e">¥0.100</span></td></tr>
+<tr class="package-row" data-card-type="散充"><td><strong>散充300刀</strong></td><td><span class="badge card-type-badge">散充</span></td><td>¥49.9买$300余额；永不过期</td><td>$300</td><td>¥49.90</td><td><span class="score-badge score-high">94.4 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#f59e0b">¥0.166</span></td></tr>
+<tr class="package-row" data-card-type="散充"><td><strong>散充200刀</strong></td><td><span class="badge card-type-badge">散充</span></td><td>¥36.6买$200余额；永不过期</td><td>$200</td><td>¥36.60</td><td><span class="score-badge score-high">93.6 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#f59e0b">¥0.183</span></td></tr>
+<tr class="package-row" data-card-type="散充"><td><strong>散充100刀</strong></td><td><span class="badge card-type-badge">散充</span></td><td>¥20买$100余额；永不过期</td><td>$100</td><td>¥20</td><td><span class="score-badge score-high">92.8 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#f59e0b">¥0.200</span></td></tr>
 </tbody></table></div>
 </div>
-<div class="vendor-card" id="vendor-5">
+<div class="vendor-card" id="vendor-5" data-vendor-name="UniVibe">
 <h3>UniVibe <span class="badge" style="background:#3b82f6">捡漏 ¥0.084</span></h3>
 <div class="ratings">
   <div class="rating-item"><span class="rating-label">定价：</span><span class="badge" style="background:#3b82f6">捡漏</span></div>
@@ -204,14 +333,14 @@ tbody tr:hover{background:#e2e8f0}
 </div>
 <div class="comment">折合定价低至¥0.084堪称捡漏，需警惕额度是否用得完，月卡+周期合理、使用充裕，无恶性限额整体友好。综合表现优秀，值得推荐。</div>
 <div class="table-wrap"><table>
-<thead><tr><th>套餐名称</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th><th>折合定价/官方$1</th></tr></thead>
+<thead><tr><th>套餐名称</th><th>卡种</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th><th>评分</th><th>限额</th><th>折合定价/官方$1</th></tr></thead>
 <tbody>
-<tr><td>Air-PRO（按恢复上限）</td><td>$15/月；约727200积分/月</td><td>$1,212/月</td><td>¥102.22</td><td><span class="price-val" style="color:#3b82f6">¥0.084</span></td></tr>
-<tr><td>Air-PRO（按恢复下限）</td><td>$15/月；约457200积分/月</td><td>$762/月</td><td>¥102.22</td><td><span class="price-val" style="color:#f59e0b">¥0.134</span></td></tr>
-<tr><td>Air-PRO（保守口径）</td><td>$15/月；按270000积分/月算</td><td>$450/月</td><td>¥102.22</td><td><span class="price-val" style="color:#f59e0b">¥0.227</span></td></tr>
+<tr class="package-row" data-card-type="月卡"><td><strong>Air-PRO（按恢复上限）</strong></td><td><span class="badge card-type-badge">月卡</span></td><td>$15/月；约727200积分/月</td><td>$1,212/月</td><td>¥102.22</td><td><span class="score-badge score-high">95.4 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#3b82f6">¥0.084</span></td></tr>
+<tr class="package-row" data-card-type="月卡"><td><strong>Air-PRO（按恢复下限）</strong></td><td><span class="badge card-type-badge">月卡</span></td><td>$15/月；约457200积分/月</td><td>$762/月</td><td>¥102.22</td><td><span class="score-badge score-high">92.9 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#f59e0b">¥0.134</span></td></tr>
+<tr class="package-row" data-card-type="月卡"><td><strong>Air-PRO（保守口径）</strong></td><td><span class="badge card-type-badge">月卡</span></td><td>$15/月；按270000积分/月算</td><td>$450/月</td><td>¥102.22</td><td><span class="score-badge score-high">88.5 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#f59e0b">¥0.227</span></td></tr>
 </tbody></table></div>
 </div>
-<div class="vendor-card" id="vendor-6">
+<div class="vendor-card" id="vendor-6" data-vendor-name="菜虚坤">
 <h3>菜虚坤 <span class="badge" style="background:#f59e0b">正常价 ¥0.141</span></h3>
 <div class="ratings">
   <div class="rating-item"><span class="rating-label">定价：</span><span class="badge" style="background:#f59e0b">正常价</span></div>
@@ -220,14 +349,14 @@ tbody tr:hover{background:#e2e8f0}
 </div>
 <div class="comment">折合定价¥0.141处于正常区间，月卡+周期合理、使用充裕，无恶性限额整体友好。综合可以考虑，注意短板。</div>
 <div class="table-wrap"><table>
-<thead><tr><th>套餐名称</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th><th>折合定价/官方$1</th></tr></thead>
+<thead><tr><th>套餐名称</th><th>卡种</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th><th>评分</th><th>限额</th><th>折合定价/官方$1</th></tr></thead>
 <tbody>
-<tr><td>Pro顶配月卡</td><td>¥169/月；$1800额度</td><td>$1,200/月</td><td>¥169</td><td><span class="price-val" style="color:#f59e0b">¥0.141</span></td></tr>
-<tr><td>GPT-Plus编程月卡</td><td>¥60/月；$600额度</td><td>$400/月</td><td>¥60</td><td><span class="price-val" style="color:#f59e0b">¥0.150</span></td></tr>
-<tr><td>GPT-Lite尝鲜月卡</td><td>¥20/月；$200额度</td><td>$133.33/月</td><td>¥20</td><td><span class="price-val" style="color:#f59e0b">¥0.150</span></td></tr>
+<tr class="package-row" data-card-type="月卡"><td><strong>Pro顶配月卡</strong></td><td><span class="badge card-type-badge">月卡</span></td><td>¥169/月；$1800额度</td><td>$1,200/月</td><td>¥169</td><td><span class="score-badge score-high">92.6 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#f59e0b">¥0.141</span></td></tr>
+<tr class="package-row" data-card-type="月卡"><td><strong>GPT-Plus编程月卡</strong></td><td><span class="badge card-type-badge">月卡</span></td><td>¥60/月；$600额度</td><td>$400/月</td><td>¥60</td><td><span class="score-badge score-high">92.2 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#f59e0b">¥0.150</span></td></tr>
+<tr class="package-row" data-card-type="月卡"><td><strong>GPT-Lite尝鲜月卡</strong></td><td><span class="badge card-type-badge">月卡</span></td><td>¥20/月；$200额度</td><td>$133.33/月</td><td>¥20</td><td><span class="score-badge score-high">92.2 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#f59e0b">¥0.150</span></td></tr>
 </tbody></table></div>
 </div>
-<div class="vendor-card" id="vendor-7">
+<div class="vendor-card" id="vendor-7" data-vendor-name="FreeModel.dev">
 <h3>FreeModel.dev <span class="badge" style="background:#f59e0b">正常价 ¥0.160</span></h3>
 <div class="ratings">
   <div class="rating-item"><span class="rating-label">定价：</span><span class="badge" style="background:#f59e0b">正常价</span></div>
@@ -236,17 +365,17 @@ tbody tr:hover{background:#e2e8f0}
 </div>
 <div class="comment">折合定价¥0.160处于正常区间，散充永不过期是最大加分项，存在日限或5h限额体验受损，提供6种套餐选择丰富。综合一般，建议谨慎选择。</div>
 <div class="table-wrap"><table>
-<thead><tr><th>套餐名称</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th><th>折合定价/官方$1</th></tr></thead>
+<thead><tr><th>套餐名称</th><th>卡种</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th><th>评分</th><th>限额</th><th>折合定价/官方$1</th></tr></thead>
 <tbody>
-<tr><td>套餐 Pro</td><td>£5/月；每5小时$10额度，每7天$67额度</td><td>$287.14/月</td><td>¥46.06</td><td><span class="price-val" style="color:#f59e0b">¥0.160</span></td></tr>
-<tr><td>套餐 Pro+</td><td>£10/月；每5小时$20额度，每7天$132额度</td><td>$565.71/月</td><td>¥92.12</td><td><span class="price-val" style="color:#f59e0b">¥0.163</span></td></tr>
-<tr><td>套餐 Max</td><td>£20/月；每5小时$40额度，每7天$264额度</td><td>$1,131.43/月</td><td>¥184.24</td><td><span class="price-val" style="color:#f59e0b">¥0.163</span></td></tr>
-<tr><td>套餐 Ultra</td><td>£100/月；每5小时$200额度，每7天$1320额度</td><td>$5,657.14/月</td><td>¥921.20</td><td><span class="price-val" style="color:#f59e0b">¥0.163</span></td></tr>
-<tr><td>套餐 Power</td><td>£200/月；每5小时$400额度，每7天$2640额度</td><td>$11,314.29/月</td><td>¥1,842.41</td><td><span class="price-val" style="color:#f59e0b">¥0.163</span></td></tr>
-<tr><td>散充</td><td>$100余额实付32.81HKD(≈3GBP)</td><td>$100</td><td>¥28.51</td><td><span class="price-val" style="color:#f59e0b">¥0.285</span></td></tr>
+<tr class="package-row" data-card-type="月卡"><td><strong>套餐 Pro</strong></td><td><span class="badge card-type-badge">月卡</span></td><td>£5/月；每5小时$10额度，每7天$67额度</td><td>$287.14/月</td><td>¥46.06</td><td><span class="score-badge score-medium">76.7 分</span></td><td><span class="badge" style="background:#ef4444">🔗 恶犬</span></td><td><span class="price-val" style="color:#f59e0b">¥0.160</span></td></tr>
+<tr class="package-row" data-card-type="月卡"><td><strong>套餐 Pro+</strong></td><td><span class="badge card-type-badge">月卡</span></td><td>£10/月；每5小时$20额度，每7天$132额度</td><td>$565.71/月</td><td>¥92.12</td><td><span class="score-badge score-medium">76.5 分</span></td><td><span class="badge" style="background:#ef4444">🔗 恶犬</span></td><td><span class="price-val" style="color:#f59e0b">¥0.163</span></td></tr>
+<tr class="package-row" data-card-type="月卡"><td><strong>套餐 Max</strong></td><td><span class="badge card-type-badge">月卡</span></td><td>£20/月；每5小时$40额度，每7天$264额度</td><td>$1,131.43/月</td><td>¥184.24</td><td><span class="score-badge score-medium">76.5 分</span></td><td><span class="badge" style="background:#ef4444">🔗 恶犬</span></td><td><span class="price-val" style="color:#f59e0b">¥0.163</span></td></tr>
+<tr class="package-row" data-card-type="月卡"><td><strong>套餐 Ultra</strong></td><td><span class="badge card-type-badge">月卡</span></td><td>£100/月；每5小时$200额度，每7天$1320额度</td><td>$5,657.14/月</td><td>¥921.20</td><td><span class="score-badge score-medium">76.5 分</span></td><td><span class="badge" style="background:#ef4444">🔗 恶犬</span></td><td><span class="price-val" style="color:#f59e0b">¥0.163</span></td></tr>
+<tr class="package-row" data-card-type="月卡"><td><strong>套餐 Power</strong></td><td><span class="badge card-type-badge">月卡</span></td><td>£200/月；每5小时$400额度，每7天$2640额度</td><td>$11,314.29/月</td><td>¥1,842.41</td><td><span class="score-badge score-medium">76.5 分</span></td><td><span class="badge" style="background:#ef4444">🔗 恶犬</span></td><td><span class="price-val" style="color:#f59e0b">¥0.163</span></td></tr>
+<tr class="package-row" data-card-type="散充"><td><strong>散充</strong></td><td><span class="badge card-type-badge">散充</span></td><td>$100余额实付32.81HKD(≈3GBP)</td><td>$100</td><td>¥28.51</td><td><span class="score-badge score-high">88.7 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#f59e0b">¥0.285</span></td></tr>
 </tbody></table></div>
 </div>
-<div class="vendor-card" id="vendor-8">
+<div class="vendor-card" id="vendor-8" data-vendor-name="chaoye.xyz">
 <h3>chaoye.xyz <span class="badge" style="background:#f59e0b">正常价 ¥0.200</span></h3>
 <div class="ratings">
   <div class="rating-item"><span class="rating-label">定价：</span><span class="badge" style="background:#f59e0b">正常价</span></div>
@@ -255,13 +384,13 @@ tbody tr:hover{background:#e2e8f0}
 </div>
 <div class="comment">折合定价¥0.200处于正常区间，散充永不过期是最大加分项，无恶性限额整体友好。综合可以考虑，注意短板。</div>
 <div class="table-wrap"><table>
-<thead><tr><th>套餐名称</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th><th>折合定价/官方$1</th></tr></thead>
+<thead><tr><th>套餐名称</th><th>卡种</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th><th>评分</th><th>限额</th><th>折合定价/官方$1</th></tr></thead>
 <tbody>
-<tr><td>散充（GPT 最低倍率）</td><td>¥1=1余额；GPT倍率0.2x</td><td>$5</td><td>¥1</td><td><span class="price-val" style="color:#f59e0b">¥0.200</span></td></tr>
-<tr><td>散充（GPT 最高倍率）</td><td>¥1=1余额；GPT倍率0.4x</td><td>$2.50</td><td>¥1</td><td><span class="price-val" style="color:#f59e0b">¥0.400</span></td></tr>
+<tr class="package-row" data-card-type="散充"><td><strong>散充（GPT 最低倍率）</strong></td><td><span class="badge card-type-badge">散充</span></td><td>¥1=1余额；GPT倍率0.2x</td><td>$5</td><td>¥1</td><td><span class="score-badge score-high">92.8 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#f59e0b">¥0.200</span></td></tr>
+<tr class="package-row" data-card-type="散充"><td><strong>散充（GPT 最高倍率）</strong></td><td><span class="badge card-type-badge">散充</span></td><td>¥1=1余额；GPT倍率0.4x</td><td>$2.50</td><td>¥1</td><td><span class="score-badge score-high">83.1 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#f59e0b">¥0.400</span></td></tr>
 </tbody></table></div>
 </div>
-<div class="vendor-card" id="vendor-9">
+<div class="vendor-card" id="vendor-9" data-vendor-name="autocode.space">
 <h3>autocode.space <span class="badge" style="background:#f59e0b">正常价 ¥0.300</span></h3>
 <div class="ratings">
   <div class="rating-item"><span class="rating-label">定价：</span><span class="badge" style="background:#f59e0b">正常价</span></div>
@@ -270,12 +399,12 @@ tbody tr:hover{background:#e2e8f0}
 </div>
 <div class="comment">折合定价¥0.300处于正常区间，散充永不过期是最大加分项，无恶性限额整体友好，仅单一选项灵活度有限。综合可以考虑，注意短板。</div>
 <div class="table-wrap"><table>
-<thead><tr><th>套餐名称</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th><th>折合定价/官方$1</th></tr></thead>
+<thead><tr><th>套餐名称</th><th>卡种</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th><th>评分</th><th>限额</th><th>折合定价/官方$1</th></tr></thead>
 <tbody>
-<tr><td>散充（GPT-5.5）</td><td>¥1=$1余额；input$1.5/output$9/cached$0.15/1M</td><td>$3.33</td><td>¥1</td><td><span class="price-val" style="color:#f59e0b">¥0.300</span></td></tr>
+<tr class="package-row" data-card-type="散充"><td><strong>散充（GPT-5.5）</strong></td><td><span class="badge card-type-badge">散充</span></td><td>¥1=$1余额；input$1.5/output$9/cached$0.15/1M</td><td>$3.33</td><td>¥1</td><td><span class="score-badge score-high">87.9 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#f59e0b">¥0.300</span></td></tr>
 </tbody></table></div>
 </div>
-<div class="vendor-card" id="vendor-10">
+<div class="vendor-card" id="vendor-10" data-vendor-name="relayai.asia">
 <h3>relayai.asia <span class="badge" style="background:#f59e0b">正常价 ¥0.385</span></h3>
 <div class="ratings">
   <div class="rating-item"><span class="rating-label">定价：</span><span class="badge" style="background:#f59e0b">正常价</span></div>
@@ -284,14 +413,14 @@ tbody tr:hover{background:#e2e8f0}
 </div>
 <div class="comment">折合定价¥0.385处于正常区间，散充永不过期是最大加分项，无恶性限额整体友好。综合可以考虑，注意短板。</div>
 <div class="table-wrap"><table>
-<thead><tr><th>套餐名称</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th><th>折合定价/官方$1</th></tr></thead>
+<thead><tr><th>套餐名称</th><th>卡种</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th><th>评分</th><th>限额</th><th>折合定价/官方$1</th></tr></thead>
 <tbody>
-<tr><td>散充（满¥5000赠$1500）</td><td>¥5000→$6500余额；Codex 0.5x倍率</td><td>$13,000</td><td>¥5,000</td><td><span class="price-val" style="color:#f59e0b">¥0.385</span></td></tr>
-<tr><td>散充（满¥500赠$88）</td><td>¥500→$588余额；Codex 0.5x倍率</td><td>$1,176</td><td>¥500</td><td><span class="price-val" style="color:#f59e0b">¥0.425</span></td></tr>
-<tr><td>散充（无赠送）</td><td>¥1=$1余额；Codex 0.5x倍率</td><td>$2</td><td>¥1</td><td><span class="price-val" style="color:#ef4444">¥0.500</span></td></tr>
+<tr class="package-row" data-card-type="散充"><td><strong>散充（满¥5000赠$1500）</strong></td><td><span class="badge card-type-badge">散充</span></td><td>¥5000→$6500余额；Codex 0.5x倍率</td><td>$13,000</td><td>¥5,000</td><td><span class="score-badge score-high">83.8 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#f59e0b">¥0.385</span></td></tr>
+<tr class="package-row" data-card-type="散充"><td><strong>散充（满¥500赠$88）</strong></td><td><span class="badge card-type-badge">散充</span></td><td>¥500→$588余额；Codex 0.5x倍率</td><td>$1,176</td><td>¥500</td><td><span class="score-badge score-high">81.9 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#f59e0b">¥0.425</span></td></tr>
+<tr class="package-row" data-card-type="散充"><td><strong>散充（无赠送）</strong></td><td><span class="badge card-type-badge">散充</span></td><td>¥1=$1余额；Codex 0.5x倍率</td><td>$2</td><td>¥1</td><td><span class="score-badge score-medium">78.3 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#ef4444">¥0.500</span></td></tr>
 </tbody></table></div>
 </div>
-<div class="vendor-card" id="vendor-11">
+<div class="vendor-card" id="vendor-11" data-vendor-name="link-ai.cc">
 <h3>link-ai.cc <span class="badge" style="background:#f59e0b">正常价 ¥0.432</span></h3>
 <div class="ratings">
   <div class="rating-item"><span class="rating-label">定价：</span><span class="badge" style="background:#f59e0b">正常价</span></div>
@@ -300,17 +429,17 @@ tbody tr:hover{background:#e2e8f0}
 </div>
 <div class="comment">折合定价¥0.432处于正常区间，散充永不过期是最大加分项，无恶性限额整体友好，提供6种套餐选择丰富。综合可以考虑，注意短板。</div>
 <div class="table-wrap"><table>
-<thead><tr><th>套餐名称</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th><th>折合定价/官方$1</th></tr></thead>
+<thead><tr><th>套餐名称</th><th>卡种</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th><th>评分</th><th>限额</th><th>折合定价/官方$1</th></tr></thead>
 <tbody>
-<tr><td>散充$500（GPT-5.5 default分组）</td><td>¥360买$500余额(8.0折)；同上</td><td>$833.33</td><td>¥360</td><td><span class="price-val" style="color:#f59e0b">¥0.432</span></td></tr>
-<tr><td>散充$200（GPT-5.5 default分组）</td><td>¥153买$200余额(8.5折)；同上</td><td>$333.33</td><td>¥153</td><td><span class="price-val" style="color:#f59e0b">¥0.459</span></td></tr>
-<tr><td>散充$100（GPT-5.5 default分组）</td><td>¥90买$100余额；input$3/output$18/1M</td><td>$166.67</td><td>¥90</td><td><span class="price-val" style="color:#ef4444">¥0.540</span></td></tr>
-<tr><td>散充$500（GPT-5.5 Codex旗舰分组）</td><td>¥360买$500余额(8.0折)；同上</td><td>$641.03</td><td>¥360</td><td><span class="price-val" style="color:#ef4444">¥0.562</span></td></tr>
-<tr><td>散充$200（GPT-5.5 Codex旗舰分组）</td><td>¥153买$200余额(8.5折)；同上</td><td>$256.41</td><td>¥153</td><td><span class="price-val" style="color:#ef4444">¥0.597</span></td></tr>
-<tr><td>散充$100（GPT-5.5 Codex旗舰分组）</td><td>¥90买$100余额；input$3.9/output$23.4/1M</td><td>$128.21</td><td>¥90</td><td><span class="price-val" style="color:#ef4444">¥0.702</span></td></tr>
+<tr class="package-row" data-card-type="散充"><td><strong>散充$500（GPT-5.5 default分组）</strong></td><td><span class="badge card-type-badge">散充</span></td><td>¥360买$500余额(8.0折)；同上</td><td>$833.33</td><td>¥360</td><td><span class="score-badge score-high">81.6 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#f59e0b">¥0.432</span></td></tr>
+<tr class="package-row" data-card-type="散充"><td><strong>散充$200（GPT-5.5 default分组）</strong></td><td><span class="badge card-type-badge">散充</span></td><td>¥153买$200余额(8.5折)；同上</td><td>$333.33</td><td>¥153</td><td><span class="score-badge score-high">80.3 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#f59e0b">¥0.459</span></td></tr>
+<tr class="package-row" data-card-type="散充"><td><strong>散充$100（GPT-5.5 default分组）</strong></td><td><span class="badge card-type-badge">散充</span></td><td>¥90买$100余额；input$3/output$18/1M</td><td>$166.67</td><td>¥90</td><td><span class="score-badge score-medium">76.3 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#ef4444">¥0.540</span></td></tr>
+<tr class="package-row" data-card-type="散充"><td><strong>散充$500（GPT-5.5 Codex旗舰分组）</strong></td><td><span class="badge card-type-badge">散充</span></td><td>¥360买$500余额(8.0折)；同上</td><td>$641.03</td><td>¥360</td><td><span class="score-badge score-medium">75.3 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#ef4444">¥0.562</span></td></tr>
+<tr class="package-row" data-card-type="散充"><td><strong>散充$200（GPT-5.5 Codex旗舰分组）</strong></td><td><span class="badge card-type-badge">散充</span></td><td>¥153买$200余额(8.5折)；同上</td><td>$256.41</td><td>¥153</td><td><span class="score-badge score-medium">73.6 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#ef4444">¥0.597</span></td></tr>
+<tr class="package-row" data-card-type="散充"><td><strong>散充$100（GPT-5.5 Codex旗舰分组）</strong></td><td><span class="badge card-type-badge">散充</span></td><td>¥90买$100余额；input$3.9/output$23.4/1M</td><td>$128.21</td><td>¥90</td><td><span class="score-badge score-medium">68.5 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#ef4444">¥0.702</span></td></tr>
 </tbody></table></div>
 </div>
-<div class="vendor-card" id="vendor-12">
+<div class="vendor-card" id="vendor-12" data-vendor-name="HyperAPI.cc">
 <h3>HyperAPI.cc <span class="badge" style="background:#ef4444">噶韭菜 ¥1.273</span></h3>
 <div class="ratings">
   <div class="rating-item"><span class="rating-label">定价：</span><span class="badge" style="background:#ef4444">噶韭菜</span></div>
@@ -319,17 +448,94 @@ tbody tr:hover{background:#e2e8f0}
 </div>
 <div class="comment">折合定价高达¥1.273属于韭菜价位，月卡+周期合理、使用充裕，无恶性限额整体友好。综合可以考虑，注意短板。</div>
 <div class="table-wrap"><table>
-<thead><tr><th>套餐名称</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th><th>折合定价/官方$1</th></tr></thead>
+<thead><tr><th>套餐名称</th><th>卡种</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th><th>评分</th><th>限额</th><th>折合定价/官方$1</th></tr></thead>
 <tbody>
-<tr><td>月卡（推荐）</td><td>$59.90/月；额度$480</td><td>$320/月</td><td>¥407.32</td><td><span class="price-val" style="color:#ef4444">¥1.273</span></td></tr>
-<tr><td>周卡</td><td>$15.90/7天；额度$120</td><td>$80/周期</td><td>¥108.12</td><td><span class="price-val" style="color:#ef4444">¥1.352</span></td></tr>
-<tr><td>日卡</td><td>$2.90/天；额度$20</td><td>$13.33/周期</td><td>¥19.72</td><td><span class="price-val" style="color:#ef4444">¥1.479</span></td></tr>
-<tr><td>月卡轻量</td><td>$39.90/月；额度$240</td><td>$160/月</td><td>¥271.32</td><td><span class="price-val" style="color:#ef4444">¥1.696</span></td></tr>
+<tr class="package-row" data-card-type="月卡"><td><strong>月卡（推荐）</strong></td><td><span class="badge card-type-badge">月卡</span></td><td>$59.90/月；额度$480</td><td>$320/月</td><td>¥407.32</td><td><span class="score-badge score-low">38.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#ef4444">¥1.273</span></td></tr>
+<tr class="package-row" data-card-type="周卡"><td><strong>周卡</strong></td><td><span class="badge card-type-badge">周卡</span></td><td>$15.90/7天；额度$120</td><td>$80/周期</td><td>¥108.12</td><td><span class="score-badge score-low">30.1 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#ef4444">¥1.352</span></td></tr>
+<tr class="package-row" data-card-type="日卡"><td><strong>日卡</strong></td><td><span class="badge card-type-badge">日卡</span></td><td>$2.90/天；额度$20</td><td>$13.33/周期</td><td>¥19.72</td><td><span class="score-badge score-low">19.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#ef4444">¥1.479</span></td></tr>
+<tr class="package-row" data-card-type="月卡"><td><strong>月卡轻量</strong></td><td><span class="badge card-type-badge">月卡</span></td><td>$39.90/月；额度$240</td><td>$160/月</td><td>¥271.32</td><td><span class="score-badge score-low">27.0 分</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td><span class="price-val" style="color:#ef4444">¥1.696</span></td></tr>
 </tbody></table></div>
 </div>
 
 <div style="text-align:center;color:#94a3b8;font-size:0.8rem;margin:2rem 0 1rem;padding-top:1rem;border-top:1px solid #e2e8f0">
   AI 中转站比价分析报告 · 数据截至 2026-05-29 · 仅供参考，请以实际体验为准
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const chks = document.querySelectorAll('.filter-chk');
+  
+  function updateFilter() {
+    const activeTypes = Array.from(chks)
+      .filter(c => c.checked)
+      .map(c => c.value);
+      
+    // 1. 过滤具体套餐行
+    const rows = document.querySelectorAll('.package-row');
+    rows.forEach(row => {
+      const type = row.getAttribute('data-card-type');
+      if (activeTypes.includes(type)) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+    
+    // 2. 过滤供应商详情卡片 (若供应商所有套餐都被过滤，隐藏该卡片)
+    const cards = document.querySelectorAll('.vendor-card');
+    cards.forEach(card => {
+      const cardRows = card.querySelectorAll('.package-row');
+      let hasVisible = false;
+      cardRows.forEach(row => {
+        if (row.style.display !== 'none') {
+          hasVisible = true;
+        }
+      });
+      if (hasVisible) {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+    
+    // 3. 过滤供应商排行榜行 (对应卡片隐藏，则排行榜隐藏)
+    const lbRows = document.querySelectorAll('.leaderboard-row');
+    lbRows.forEach(lbRow => {
+      const vendorName = lbRow.getAttribute('data-vendor-name');
+      const card = document.querySelector(`.vendor-card[data-vendor-name="${vendorName}"]`);
+      if (card && card.style.display !== 'none') {
+        lbRow.style.display = '';
+      } else {
+        lbRow.style.display = 'none';
+      }
+    });
+    
+    // 4. 重新计算大乱斗中可见套餐的排名数字
+    const brawlRows = document.querySelectorAll('#brawl-table tbody tr.package-row');
+    let rank = 1;
+    brawlRows.forEach(row => {
+      if (row.style.display !== 'none') {
+        const rankCell = row.querySelector('.brawl-rank');
+        if (rankCell) rankCell.textContent = rank++;
+      }
+    });
+    
+    // 5. 重新计算排行榜中可见供应商的排名数字
+    let lbRank = 1;
+    lbRows.forEach(row => {
+      if (row.style.display !== 'none') {
+        const rankCell = row.querySelector('.rank-num');
+        if (rankCell) rankCell.textContent = lbRank++;
+      }
+    });
+  }
+  
+  chks.forEach(chk => {
+    chk.addEventListener('change', updateFilter);
+  });
+  
+  updateFilter();
+});
+</script>
 </body>
 </html>
