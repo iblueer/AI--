@@ -669,28 +669,37 @@ def generate_html(vendor_analysis, total_entries):
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {{
+(function() {{
   const chks = document.querySelectorAll('.filter-chk');
   
   function updateFilter() {{
-    const activeTypes = Array.from(chks)
-      .filter(c => c.checked)
-      .map(c => c.value);
+    const activeTypes = [];
+    chks.forEach(chk => {{
+      if (chk.checked) {{
+        activeTypes.push(chk.value);
+      }}
+    }});
       
-    // 1. 过滤具体套餐行
+    // 1. 过滤具体套餐行 (包括大乱斗表和详情表中的所有行)
     const rows = document.querySelectorAll('.package-row');
     rows.forEach(row => {{
       const type = row.getAttribute('data-card-type');
-      if (activeTypes.includes(type)) {{
+      if (activeTypes.indexOf(type) !== -1) {{
         row.style.display = '';
       }} else {{
         row.style.display = 'none';
       }}
     }});
     
-    // 2. 过滤供应商详情卡片 (若供应商所有套餐都被过滤，隐藏该卡片)
+    // 2. 建立供应商详情卡片的 Map，以避免特殊字符导致的选择器解析问题
     const cards = document.querySelectorAll('.vendor-card');
+    const cardMap = {{}};
     cards.forEach(card => {{
+      const name = card.getAttribute('data-vendor-name');
+      if (name) {{
+        cardMap[name] = card;
+      }}
+      
       const cardRows = card.querySelectorAll('.package-row');
       let hasVisible = false;
       cardRows.forEach(row => {{
@@ -709,7 +718,7 @@ document.addEventListener('DOMContentLoaded', function() {{
     const lbRows = document.querySelectorAll('.leaderboard-row');
     lbRows.forEach(lbRow => {{
       const vendorName = lbRow.getAttribute('data-vendor-name');
-      const card = document.querySelector(`.vendor-card[data-vendor-name="${{vendorName}}"]`);
+      const card = cardMap[vendorName];
       if (card && card.style.display !== 'none') {{
         lbRow.style.display = '';
       }} else {{
@@ -718,12 +727,14 @@ document.addEventListener('DOMContentLoaded', function() {{
     }});
     
     // 4. 重新计算大乱斗中可见套餐的排名数字
-    const brawlRows = document.querySelectorAll('#brawl-table tbody tr.package-row');
+    const brawlRows = document.querySelectorAll('#brawl-table .package-row');
     let rank = 1;
     brawlRows.forEach(row => {{
       if (row.style.display !== 'none') {{
         const rankCell = row.querySelector('.brawl-rank');
-        if (rankCell) rankCell.textContent = rank++;
+        if (rankCell) {{
+          rankCell.textContent = rank++;
+        }}
       }}
     }});
     
@@ -732,7 +743,9 @@ document.addEventListener('DOMContentLoaded', function() {{
     lbRows.forEach(row => {{
       if (row.style.display !== 'none') {{
         const rankCell = row.querySelector('.rank-num');
-        if (rankCell) rankCell.textContent = lbRank++;
+        if (rankCell) {{
+          rankCell.textContent = lbRank++;
+        }}
       }}
     }});
   }}
@@ -742,7 +755,7 @@ document.addEventListener('DOMContentLoaded', function() {{
   }});
   
   updateFilter();
-}});
+}})();
 </script>
 </body>
 </html>''')
