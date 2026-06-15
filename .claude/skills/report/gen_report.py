@@ -686,6 +686,30 @@ def generate_html(vendor_analysis, total_entries):
 
 <script>
 (function() {{
+  function switchTab(tabId) {{
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    const targetContent = document.getElementById(tabId);
+    if (targetContent) {{
+      targetContent.classList.add('active');
+    }}
+    document.querySelectorAll('.tab-btn').forEach(btn => {{
+      if (btn.getAttribute('onclick').includes(tabId)) {{
+        btn.classList.add('active');
+      }} else {{
+        btn.classList.remove('active');
+      }}
+    }});
+  }}
+  window.switchTab = switchTab;
+
+  function setCheckboxes(selector, checked) {{
+    document.querySelectorAll(selector).forEach(chk => {{
+      chk.checked = checked;
+    }});
+    updateFilter();
+  }}
+  window.setCheckboxes = setCheckboxes;
+
   const chks = document.querySelectorAll('.filter-chk');
   const vendorChks = document.querySelectorAll('.filter-vendor-chk');
   
