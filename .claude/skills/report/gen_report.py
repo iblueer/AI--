@@ -649,8 +649,6 @@ def generate_html(vendor_analysis, total_entries):
       <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: center;">{vendor_chks_str}</div>
     </div>
   </div>
-  <h2>供应商排行榜 (按筛选动态更新)</h2>
-  {make_leaderboard_html(vendor_analysis, "dyn-")}
   <h2>套餐性价比大乱斗</h2>
   <div class="table-wrap"><table id="brawl-table">
   <thead><tr>
@@ -741,17 +739,6 @@ def generate_html(vendor_analysis, total_entries):
       }}
     }});
     
-    const lbRows = document.querySelectorAll('#sheet-full .leaderboard-row');
-    lbRows.forEach(lbRow => {{
-      const vendorName = lbRow.getAttribute('data-vendor-name');
-      const vendorMatch = activeVendors.indexOf(vendorName) !== -1;
-      if (vendorMatch) {{
-        lbRow.style.display = '';
-      }} else {{
-        lbRow.style.display = 'none';
-      }}
-    }});
-    
     // 3. 重新计算大乱斗中可见套餐的排名数字
     const brawlRows = document.querySelectorAll('#brawl-table .package-row');
     let rank = 1;
@@ -760,17 +747,6 @@ def generate_html(vendor_analysis, total_entries):
         const rankCell = row.querySelector('.brawl-rank');
         if (rankCell) {{
           rankCell.textContent = rank++;
-        }}
-      }}
-    }});
-    
-    // 4. 重新计算排行榜中可见供应商的排名数字
-    let lbRank = 1;
-    lbRows.forEach(row => {{
-      if (row.style.display !== 'none') {{
-        const rankCell = row.querySelector('.rank-num');
-        if (rankCell) {{
-          rankCell.textContent = lbRank++;
         }}
       }}
     }});
