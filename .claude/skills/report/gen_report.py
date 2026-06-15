@@ -501,6 +501,13 @@ CRITERIA_HTML = '''
 
 
 def generate_html(vendor_analysis, total_entries):
+    # 生成供应商筛选 Checkbox HTML
+    vendor_chks_html = []
+    for v in vendor_analysis:
+        name = esc(v['name'])
+        vendor_chks_html.append(f'<label class="filter-label"><input type="checkbox" class="filter-vendor-chk" value="{name}" checked> {name}</label>')
+    vendor_chks_str = '\n  '.join(vendor_chks_html)
+
     # 编译所有单项套餐，用于“大乱斗”
     all_packages = []
     for v in vendor_analysis:
@@ -542,13 +549,19 @@ def generate_html(vendor_analysis, total_entries):
 
 <!-- 筛选面板 -->
 <div class="filter-panel">
-  <strong>筛选卡种：</strong>
-  <label class="filter-label"><input type="checkbox" class="filter-chk" value="散充" checked> 散充</label>
-  <label class="filter-label"><input type="checkbox" class="filter-chk" value="日卡" checked> 日卡</label>
-  <label class="filter-label"><input type="checkbox" class="filter-chk" value="周卡" checked> 周卡</label>
-  <label class="filter-label"><input type="checkbox" class="filter-chk" value="月卡" checked> 月卡</label>
-  <label class="filter-label"><input type="checkbox" class="filter-chk" value="季卡" checked> 季卡</label>
-  <label class="filter-label"><input type="checkbox" class="filter-chk" value="年卡" checked> 年卡</label>
+  <div style="width: 100%; display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 0.5rem;">
+    <strong>筛选卡种：</strong>
+    <label class="filter-label"><input type="checkbox" class="filter-chk" value="散充" checked> 散充</label>
+    <label class="filter-label"><input type="checkbox" class="filter-chk" value="日卡" checked> 日卡</label>
+    <label class="filter-label"><input type="checkbox" class="filter-chk" value="周卡" checked> 周卡</label>
+    <label class="filter-label"><input type="checkbox" class="filter-chk" value="月卡" checked> 月卡</label>
+    <label class="filter-label"><input type="checkbox" class="filter-chk" value="季卡" checked> 季卡</label>
+    <label class="filter-label"><input type="checkbox" class="filter-chk" value="年卡" checked> 年卡</label>
+  </div>
+  <div style="width: 100%; display: flex; gap: 1.5rem; flex-wrap: wrap; border-top: 1px solid #e2e8f0; padding-top: 0.5rem;">
+    <strong>筛选商家：</strong>
+    {vendor_chks_str}
+  </div>
 </div>
 ''')
 
@@ -609,7 +622,7 @@ def generate_html(vendor_analysis, total_entries):
         else:
             score_class = 'score-low'
 
-        h.append(f'<tr class="package-row" data-card-type="{esc(p["card_type"])}">'
+        h.append(f'<tr class="package-row" data-card-type="{esc(p["card_type"])}" data-vendor-name="{esc(p["vendor"])}">'
                  f'<td class="brawl-rank" data-val="{i+1}" style="font-weight:bold;color:#64748b">{i+1}</td>'
                  f'<td data-val="{esc(p["vendor"])}"><strong>{esc(p["vendor"])}</strong></td>'
                  f'<td data-val="{esc(p["plan_name"])}">{esc(p["plan_name"])}</td>'
@@ -629,77 +642,16 @@ def generate_html(vendor_analysis, total_entries):
     # ── 评级标准 ──
     h.append(f'<h2>评级标准说明</h2>\n<div class="criteria-grid">\n{CRITERIA_HTML}\n</div>\n')
 
-    # ── 供应商详情卡片 ──
-    h.append('<h2>供应商详情</h2>\n')
-
-    for i, v in enumerate(vendor_analysis):
-        pr_label, pr_color = v['pricing']
-        _, pe_label, pe_icon = v['period']
-        _, li_label, li_icon = v['limit']
-        pe_color = PERIOD_COLORS.get(pe_label, '#94a3b8')
-        li_color = LIMIT_COLORS.get(li_label, '#94a3b8')
-
-        h.append(f'<div class="vendor-card" id="vendor-{i+1}" data-vendor-name="{esc(v["name"])}">\n')
-        h.append(f'<h3>{esc(v["name"])} '
-                 f'<span class="badge" style="background:{pr_color}">{pr_label} ¥{v["best_price"]:.3f}</span></h3>\n')
-        h.append('<div class="ratings">\n')
-        h.append(f'  <div class="rating-item"><span class="rating-label">定价：</span>'
-                 f'<span class="badge" style="background:{pr_color}">{pr_label}</span></div>\n')
-        h.append(f'  <div class="rating-item"><span class="rating-label">周期：</span>'
-                 f'<span class="badge" style="background:{pe_color}">{pe_icon} {pe_label}</span></div>\n')
-        h.append(f'  <div class="rating-item"><span class="rating-label">限额：</span>'
-                 f'<span class="badge" style="background:{li_color}">{li_icon} {li_label}</span></div>\n')
-        h.append('</div>\n')
-        h.append(f'<div class="comment">{esc(v["comment"])}</div>\n')
-
-        # 套餐明细表
-        h.append('<div class="table-wrap"><table>\n<thead><tr>')
-        h.append('<th class="sortable" data-sort="text">套餐名称</th>'
-                 '<th class="sortable" data-sort="text">卡种</th>'
-                 '<th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th>'
-                 '<th class="sortable" data-sort="num">评分</th>'
-                 '<th class="sortable" data-sort="text">限额</th>'
-                 '<th class="sortable" data-sort="num">折合定价/官方$1</th>'
-                 '<th class="sortable" data-sort="num">折合官方倍率</th>'
-                 '<th class="sortable" data-sort="num">GPT-5.5 1M输入单价(¥)</th>')
-        h.append('</tr></thead>\n<tbody>\n')
-
-        for e in sorted(v['entries'], key=lambda x: x['price_val']):
-            c = pricing_rating(e['price_val'])[1]
-            l_col = limit_colors.get(e['limit_type'], '#94a3b8')
-            l_emo = limit_emojis.get(e['limit_type'], '❓')
-            
-            if e['score'] >= 80:
-                score_class = 'score-high'
-            elif e['score'] >= 50:
-                score_class = 'score-medium'
-            else:
-                score_class = 'score-low'
-
-            h.append(f'<tr class="package-row" data-card-type="{esc(e["card_type"])}">'
-                     f'<td data-val="{esc(e["plan_name"])}"><strong>{esc(e["plan_name"])}</strong></td>'
-                     f'<td data-val="{esc(e["card_type"])}"><span class="badge card-type-badge">{esc(e["card_type"])}</span></td>'
-                     f'<td>{esc(e["pricing_rule"])}</td>'
-                     f'<td>{esc(e["equiv_usage"])}</td>'
-                     f'<td>{esc(e["user_paid"])}</td>'
-                     f'<td data-val="{e["score"]}"><span class="score-badge {score_class}">{e["score"]} 分</span></td>'
-                     f'<td data-val="{esc(e["limit_type"])}"><span class="badge" style="background:{l_col}">{l_emo} {e["limit_type"]}</span></td>'
-                     f'<td data-val="{e["price_val"]}"><span class="price-val" style="color:{c}">{esc(e["price_str"])}</span></td>'
-                     f'<td data-val="{e["multiplier_val"]}"><span class="price-val" style="color:{c}">{e["multiplier_val"]:.4f}x</span></td>'
-                     f'<td data-val="{e["input_price_val"]}"><span class="price-val" style="color:{c}">¥{e["input_price_val"]:.3f}</span></td>'
-                     f'</tr>\n')
-
-        h.append('</tbody></table></div>\n</div>\n')
-
     # Footer and JS Script
     h.append(f'''
 <div style="text-align:center;color:#94a3b8;font-size:0.8rem;margin:2rem 0 1rem;padding-top:1rem;border-top:1px solid #e2e8f0">
-  AI 中转站比价分析报告 · 数据截至 {TODAY} · 仅供参考，请以实际体验为准
+  AI 中转站比价 analysis 报告 · 数据截至 {TODAY} · 仅供参考，请以实际体验为准
 </div>
 
 <script>
 (function() {{
   const chks = document.querySelectorAll('.filter-chk');
+  const vendorChks = document.querySelectorAll('.filter-vendor-chk');
   
   function updateFilter() {{
     const activeTypes = [];
@@ -708,54 +660,41 @@ def generate_html(vendor_analysis, total_entries):
         activeTypes.push(chk.value);
       }}
     }});
+    
+    const activeVendors = [];
+    vendorChks.forEach(chk => {{
+      if (chk.checked) {{
+        activeVendors.push(chk.value);
+      }}
+    }});
       
-    // 1. 过滤具体套餐行 (包括大乱斗表和详情表中的所有行)
-    const rows = document.querySelectorAll('.package-row');
+    // 1. 过滤大乱斗套餐行
+    const rows = document.querySelectorAll('#brawl-table .package-row');
     rows.forEach(row => {{
       const type = row.getAttribute('data-card-type');
-      if (activeTypes.indexOf(type) !== -1) {{
+      const vendor = row.getAttribute('data-vendor-name');
+      const typeMatch = activeTypes.indexOf(type) !== -1;
+      const vendorMatch = activeVendors.indexOf(vendor) !== -1;
+      if (typeMatch && vendorMatch) {{
         row.style.display = '';
       }} else {{
         row.style.display = 'none';
       }}
     }});
     
-    // 2. 建立供应商详情卡片的 Map，以避免特殊字符导致的选择器解析问题
-    const cards = document.querySelectorAll('.vendor-card');
-    const cardMap = {{}};
-    cards.forEach(card => {{
-      const name = card.getAttribute('data-vendor-name');
-      if (name) {{
-        cardMap[name] = card;
-      }}
-      
-      const cardRows = card.querySelectorAll('.package-row');
-      let hasVisible = false;
-      cardRows.forEach(row => {{
-        if (row.style.display !== 'none') {{
-          hasVisible = true;
-        }}
-      }});
-      if (hasVisible) {{
-        card.style.display = '';
-      }} else {{
-        card.style.display = 'none';
-      }}
-    }});
-    
-    // 3. 过滤供应商排行榜行 (对应卡片隐藏，则排行榜隐藏)
+    // 2. 过滤供应商排行榜行 (对应供应商未勾选，则排行榜隐藏)
     const lbRows = document.querySelectorAll('.leaderboard-row');
     lbRows.forEach(lbRow => {{
       const vendorName = lbRow.getAttribute('data-vendor-name');
-      const card = cardMap[vendorName];
-      if (card && card.style.display !== 'none') {{
+      const vendorMatch = activeVendors.indexOf(vendorName) !== -1;
+      if (vendorMatch) {{
         lbRow.style.display = '';
       }} else {{
         lbRow.style.display = 'none';
       }}
     }});
     
-    // 4. 重新计算大乱斗中可见套餐的排名数字
+    // 3. 重新计算大乱斗中可见套餐的排名数字
     const brawlRows = document.querySelectorAll('#brawl-table .package-row');
     let rank = 1;
     brawlRows.forEach(row => {{
@@ -767,7 +706,7 @@ def generate_html(vendor_analysis, total_entries):
       }}
     }});
     
-    // 5. 重新计算排行榜中可见供应商的排名数字
+    // 4. 重新计算排行榜中可见供应商的排名数字
     let lbRank = 1;
     lbRows.forEach(row => {{
       if (row.style.display !== 'none') {{
@@ -782,6 +721,9 @@ def generate_html(vendor_analysis, total_entries):
   window.updateFilter = updateFilter;
   
   chks.forEach(chk => {{
+    chk.addEventListener('change', updateFilter);
+  }});
+  vendorChks.forEach(chk => {{
     chk.addEventListener('change', updateFilter);
   }});
   
