@@ -658,12 +658,20 @@ def generate_html(vendor_analysis, total_entries):
     <th class="sortable" data-sort="text">卡种</th>
     <th class="sortable" data-sort="num">折合定价/官方$1</th>
     <th class="sortable" data-sort="num">折合官方倍率</th>
+    <th class="sortable" data-sort="num">GPT-5.5 1M输入单价(¥)</th>
+    <th>等效官方额度</th>
+    <th>实际付费</th>
+    <th class="sortable" data-sort="text">限额评级</th>
+    <th>方案介绍</th>
     <th class="sortable" data-sort="num">综合评分</th>
   </tr></thead><tbody>''']
 
     limit_colors = {'良心': '#22c55e', '不太地道': '#f59e0b', '恶犬': '#ef4444'}
+    limit_emojis = {'良心': '🟢', '不太地道': '🚧', '恶犬': '🔗'}
     for i, p in enumerate(all_packages):
         c = pricing_rating(p['price_val'])[1]
+        l_col = limit_colors.get(p['limit_type'], '#94a3b8')
+        l_emo = limit_emojis.get(p['limit_type'], '❓')
         score_class = 'score-high' if p['score'] >= 80 else ('score-medium' if p['score'] >= 50 else 'score-low')
         h.append(f'<tr class="package-row" data-card-type="{esc(p["card_type"])}" data-vendor-name="{esc(p["vendor"])}">'
                  f'<td class="brawl-rank" data-val="{i+1}" style="font-weight:bold;color:#64748b">{i+1}</td>'
@@ -672,6 +680,11 @@ def generate_html(vendor_analysis, total_entries):
                  f'<td data-val="{esc(p["card_type"])}"><span class="badge card-type-badge">{esc(p["card_type"])}</span></td>'
                  f'<td data-val="{p["price_val"]}"><span class="price-val" style="color:{c}">{esc(p["price_str"])}</span></td>'
                  f'<td data-val="{p["multiplier_val"]}"><span class="price-val" style="color:{c}">{p["multiplier_val"]:.4f}x</span></td>'
+                 f'<td data-val="{p["input_price_val"]}"><span class="price-val" style="color:{c}">¥{p["input_price_val"]:.3f}</span></td>'
+                 f'<td>{esc(p["equiv_usage"])}</td>'
+                 f'<td>{esc(p["user_paid"])}</td>'
+                 f'<td data-val="{esc(p["limit_type"])}"><span class="badge" style="background:{l_col}">{l_emo} {p["limit_type"]}</span></td>'
+                 f'<td style="font-size:0.85rem;color:#475569">{esc(p["pricing_rule"])}</td>'
                  f'<td data-val="{p["score"]}"><span class="score-badge {score_class}">{p["score"]} 分</span></td>'
                  f'</tr>\n')
 
