@@ -458,6 +458,56 @@ tbody tr:hover{background:#e2e8f0}
   .ratings{flex-direction:column;gap:0.5rem}
   td,th{padding:0.4rem 0.5rem;font-size:0.82rem}
 }
+
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #cbd5e1;
+  padding-bottom: 0.5rem;
+}
+.tab-btn {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  padding: 0.5rem 1.25rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.tab-btn:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+.tab-btn.active {
+  background: #3b82f6;
+  color: #ffffff;
+  border-color: #3b82f6;
+}
+.tab-content {
+  display: none;
+}
+.tab-content.active {
+  display: block;
+}
+
+.btn-select-all {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  font-weight: 500;
+  margin-right: 0.25rem;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+}
 '''
 
 CRITERIA_HTML = '''
@@ -501,14 +551,15 @@ CRITERIA_HTML = '''
 
 
 def generate_html(vendor_analysis, total_entries):
-    # 生成供应商筛选 Checkbox HTML
+
+    # Prepare vendor checkboxes
     vendor_chks_html = []
     for v in vendor_analysis:
         name = esc(v['name'])
         vendor_chks_html.append(f'<label class="filter-label"><input type="checkbox" class="filter-vendor-chk" value="{name}" checked> {name}</label>')
     vendor_chks_str = '\n  '.join(vendor_chks_html)
 
-    # 编译所有单项套餐，用于“大乱斗”
+    # All packages for "Brawl"
     all_packages = []
     for v in vendor_analysis:
         for e in v['entries']:
@@ -516,25 +567,47 @@ def generate_html(vendor_analysis, total_entries):
                 'vendor': v['name'],
                 'plan_name': e['plan_name'],
                 'pricing_rule': e['pricing_rule'],
-                'premise': e['premise'],
-                'equiv_usage': e['equiv_usage'],
-                'user_paid': e['user_paid'],
-                'price_str': e['price_str'],
-                'price_val': e['price_val'],
                 'card_type': e['card_type'],
-                'limit_type': e['limit_type'],
-                'score': e['score'],
+                'price_val': e['price_val'],
+                'price_str': e['price_str'],
                 'multiplier_val': e['multiplier_val'],
                 'input_price_val': e['input_price_val'],
+                'score': e['score'],
+                'limit_type': e['limit_type'],
+                'equiv_usage': e['equiv_usage'],
+                'user_paid': e['user_paid'],
             })
-    
-    # 按照评分降序，价格升序进行全局排序
     all_packages.sort(key=lambda p: (-p['score'], p['price_val']))
 
-    h = []
+    def make_leaderboard_html(vendors_list, id_prefix=""):
+        lb = []
+        lb.append(f'<div class="table-wrap"><table id="{id_prefix}leaderboard-table">\n<thead><tr>')
+        lb.append('<th class="sortable" data-sort="rank">排名</th>'
+                  '<th class="sortable" data-sort="text">供应商</th>'
+                  '<th class="sortable" data-sort="num">最优折合定价</th>'
+                  '<th>定价评级</th><th>周期评级</th><th>限额评级</th><th>综合评语</th>')
+        lb.append('</tr></thead>\n<tbody>\n')
 
-    # Head
-    h.append(f'''<!DOCTYPE html>
+        for i, v in enumerate(vendors_list):
+            pr_label, pr_color = v['pricing']
+            _, pe_label, pe_icon = v['period']
+            _, li_label, li_icon = v['limit']
+            pe_color = PERIOD_COLORS.get(pe_label, '#94a3b8')
+            li_color = LIMIT_COLORS.get(li_label, '#94a3b8')
+            short = v['comment'][:40] + '…' if len(v['comment']) > 40 else v['comment']
+            lb.append(f'<tr class="leaderboard-row" data-vendor-name="{esc(v["name"])}">'
+                     f'<td class="rank-num" data-val="{i+1}">{i+1}</td>'
+                     f'<td data-val="{esc(v["name"])}"><strong>{esc(v["name"])}</strong></td>'
+                     f'<td data-val="{v["best_price"]}"><span class="price-val" style="color:{pr_color}">¥{v["best_price"]:.3f}</span></td>'
+                     f'<td><span class="badge" style="background:{pr_color}">{pr_label}</span></td>'
+                     f'<td><span class="badge" style="background:{pe_color}">{pe_icon} {pe_label}</span></td>'
+                     f'<td><span class="badge" style="background:{li_color}">{li_icon} {li_label}</span></td>'
+                     f'<td style="color:#64748b;font-size:0.85rem">{esc(short)}</td>'
+                     f'</tr>\n')
+        lb.append('</tbody></table></div>\n')
+        return ''.join(lb)
+
+    h = [f'''<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -543,85 +616,57 @@ def generate_html(vendor_analysis, total_entries):
 <style>{CSS}</style>
 </head>
 <body>
-
 <h1>AI 中转站比价分析报告</h1>
 <p class="meta">生成日期：{TODAY}　·　数据条目：{total_entries} 条　·　覆盖供应商：{len(vendor_analysis)} 家</p>
-
-<!-- 筛选面板 -->
-<div class="filter-panel">
-  <div style="width: 100%; display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 0.5rem;">
-    <strong>筛选卡种：</strong>
-    <label class="filter-label"><input type="checkbox" class="filter-chk" value="散充" checked> 散充</label>
-    <label class="filter-label"><input type="checkbox" class="filter-chk" value="日卡" checked> 日卡</label>
-    <label class="filter-label"><input type="checkbox" class="filter-chk" value="周卡" checked> 周卡</label>
-    <label class="filter-label"><input type="checkbox" class="filter-chk" value="月卡" checked> 月卡</label>
-    <label class="filter-label"><input type="checkbox" class="filter-chk" value="季卡" checked> 季卡</label>
-    <label class="filter-label"><input type="checkbox" class="filter-chk" value="年卡" checked> 年卡</label>
-  </div>
-  <div style="width: 100%; display: flex; gap: 1.5rem; flex-wrap: wrap; border-top: 1px solid #e2e8f0; padding-top: 0.5rem;">
-    <strong>筛选商家：</strong>
-    {vendor_chks_str}
-  </div>
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('sheet-leaderboard')">🏆 供应商排行榜</button>
+  <button class="tab-btn" onclick="switchTab('sheet-full')">📊 套餐性价比全览</button>
 </div>
-''')
-
-    # ── 供应商排行榜 ──
-    h.append('<h2>供应商排行榜</h2>\n<div class="table-wrap"><table>\n<thead><tr>')
-    h.append('<th class="sortable" data-sort="rank">排名</th>'
-             '<th class="sortable" data-sort="text">供应商</th>'
-             '<th class="sortable" data-sort="num">最优折合定价</th>'
-             '<th>定价评级</th><th>周期评级</th><th>限额评级</th><th>综合评语</th>')
-    h.append('</tr></thead>\n<tbody>\n')
-
-    for i, v in enumerate(vendor_analysis):
-        pr_label, pr_color = v['pricing']
-        _, pe_label, pe_icon = v['period']
-        _, li_label, li_icon = v['limit']
-        pe_color = PERIOD_COLORS.get(pe_label, '#94a3b8')
-        li_color = LIMIT_COLORS.get(li_label, '#94a3b8')
-        short = v['comment'][:40] + '…' if len(v['comment']) > 40 else v['comment']
-
-        h.append(f'<tr class="leaderboard-row" data-vendor-name="{esc(v["name"])}">'
-                 f'<td class="rank-num" data-val="{i+1}">{i+1}</td>'
-                 f'<td data-val="{esc(v["name"])}"><strong>{esc(v["name"])}</strong></td>'
-                 f'<td data-val="{v["best_price"]}"><span class="price-val" style="color:{pr_color}">¥{v["best_price"]:.3f}</span></td>'
-                 f'<td><span class="badge" style="background:{pr_color}">{pr_label}</span></td>'
-                 f'<td><span class="badge" style="background:{pe_color}">{pe_icon} {pe_label}</span></td>'
-                 f'<td><span class="badge" style="background:{li_color}">{li_icon} {li_label}</span></td>'
-                 f'<td style="color:#64748b;font-size:0.85rem">{esc(short)}</td>'
-                 f'</tr>\n')
-
-    h.append('</tbody></table></div>\n')
-
-    # ── 全局套餐性价比大乱斗 ──
-    h.append('<h2>套餐性价比大乱斗</h2>\n<div class="table-wrap"><table id="brawl-table">\n<thead><tr>')
-    h.append('<th class="sortable" data-sort="rank">排名</th>'
-             '<th class="sortable" data-sort="text">供应商</th>'
-             '<th class="sortable" data-sort="text">套餐名称</th>'
-             '<th class="sortable" data-sort="text">卡种</th>'
-             '<th class="sortable" data-sort="num">折合定价/官方$1</th>'
-             '<th class="sortable" data-sort="num">折合官方倍率</th>'
-             '<th class="sortable" data-sort="num">GPT-5.5 1M输入单价(¥)</th>'
-             '<th class="sortable" data-sort="num">综合评分</th>'
-             '<th class="sortable" data-sort="text">限额评级</th>'
-             '<th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th>')
-    h.append('</tr></thead>\n<tbody>\n')
+<div id="sheet-leaderboard" class="tab-content active">
+  <h2>供应商排行榜 (静态全览)</h2>
+  {make_leaderboard_html(vendor_analysis, "static-")}
+  <h2>评级标准说明</h2>
+  <div class="criteria-grid">{CRITERIA_HTML}</div>
+</div>
+<div id="sheet-full" class="tab-content">
+  <div class="filter-panel">
+    <div style="width: 100%; display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: center; margin-bottom: 0.5rem;">
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <strong>筛选卡种：</strong>
+        <button type="button" class="btn-select-all" onclick="setCheckboxes('.filter-chk', true)">全选</button>
+        <button type="button" class="btn-select-all" onclick="setCheckboxes('.filter-chk', false)">全不选</button>
+      </div>
+      <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: center;">
+        {''.join([f'<label class="filter-label"><input type="checkbox" class="filter-chk" value="{t}" checked> {t}</label>' for t in ['散充', '日卡', '周卡', '月卡', '季卡', '年卡']])}
+      </div>
+    </div>
+    <div style="width: 100%; display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: center; border-top: 1px solid #e2e8f0; padding-top: 0.5rem;">
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <strong>筛选商家：</strong>
+        <button type="button" class="btn-select-all" onclick="setCheckboxes('.filter-vendor-chk', true)">全选</button>
+        <button type="button" class="btn-select-all" onclick="setCheckboxes('.filter-vendor-chk', false)">全不选</button>
+      </div>
+      <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: center;">{vendor_chks_str}</div>
+    </div>
+  </div>
+  <h2>供应商排行榜 (按筛选动态更新)</h2>
+  {make_leaderboard_html(vendor_analysis, "dyn-")}
+  <h2>套餐性价比大乱斗</h2>
+  <div class="table-wrap"><table id="brawl-table">
+  <thead><tr>
+    <th class="sortable" data-sort="rank">排名</th>
+    <th class="sortable" data-sort="text">供应商</th>
+    <th class="sortable" data-sort="text">套餐名称</th>
+    <th class="sortable" data-sort="text">卡种</th>
+    <th class="sortable" data-sort="num">折合定价/官方$1</th>
+    <th class="sortable" data-sort="num">折合官方倍率</th>
+    <th class="sortable" data-sort="num">综合评分</th>
+  </tr></thead><tbody>''']
 
     limit_colors = {'良心': '#22c55e', '不太地道': '#f59e0b', '恶犬': '#ef4444'}
-    limit_emojis = {'良心': '🟢', '不太地道': '🚧', '恶犬': '🔗'}
-
     for i, p in enumerate(all_packages):
         c = pricing_rating(p['price_val'])[1]
-        l_col = limit_colors.get(p['limit_type'], '#94a3b8')
-        l_emo = limit_emojis.get(p['limit_type'], '❓')
-        
-        if p['score'] >= 80:
-            score_class = 'score-high'
-        elif p['score'] >= 50:
-            score_class = 'score-medium'
-        else:
-            score_class = 'score-low'
-
+        score_class = 'score-high' if p['score'] >= 80 else ('score-medium' if p['score'] >= 50 else 'score-low')
         h.append(f'<tr class="package-row" data-card-type="{esc(p["card_type"])}" data-vendor-name="{esc(p["vendor"])}">'
                  f'<td class="brawl-rank" data-val="{i+1}" style="font-weight:bold;color:#64748b">{i+1}</td>'
                  f'<td data-val="{esc(p["vendor"])}"><strong>{esc(p["vendor"])}</strong></td>'
@@ -629,20 +674,11 @@ def generate_html(vendor_analysis, total_entries):
                  f'<td data-val="{esc(p["card_type"])}"><span class="badge card-type-badge">{esc(p["card_type"])}</span></td>'
                  f'<td data-val="{p["price_val"]}"><span class="price-val" style="color:{c}">{esc(p["price_str"])}</span></td>'
                  f'<td data-val="{p["multiplier_val"]}"><span class="price-val" style="color:{c}">{p["multiplier_val"]:.4f}x</span></td>'
-                 f'<td data-val="{p["input_price_val"]}"><span class="price-val" style="color:{c}">¥{p["input_price_val"]:.3f}</span></td>'
                  f'<td data-val="{p["score"]}"><span class="score-badge {score_class}">{p["score"]} 分</span></td>'
-                 f'<td data-val="{esc(p["limit_type"])}"><span class="badge" style="background:{l_col}">{l_emo} {p["limit_type"]}</span></td>'
-                 f'<td style="font-size:0.85rem;color:#475569">{esc(p["pricing_rule"])}</td>'
-                 f'<td>{esc(p["equiv_usage"])}</td>'
-                 f'<td>{esc(p["user_paid"])}</td>'
                  f'</tr>\n')
 
-    h.append('</tbody></table></div>\n')
+    h.append('</tbody></table></div></div>\n')
 
-    # ── 评级标准 ──
-    h.append(f'<h2>评级标准说明</h2>\n<div class="criteria-grid">\n{CRITERIA_HTML}\n</div>\n')
-
-    # Footer and JS Script
     h.append(f'''
 <div style="text-align:center;color:#94a3b8;font-size:0.8rem;margin:2rem 0 1rem;padding-top:1rem;border-top:1px solid #e2e8f0">
   AI 中转站比价 analysis 报告 · 数据截至 {TODAY} · 仅供参考，请以实际体验为准
@@ -668,7 +704,6 @@ def generate_html(vendor_analysis, total_entries):
       }}
     }});
       
-    // 1. 过滤大乱斗套餐行
     const rows = document.querySelectorAll('#brawl-table .package-row');
     rows.forEach(row => {{
       const type = row.getAttribute('data-card-type');
@@ -682,8 +717,7 @@ def generate_html(vendor_analysis, total_entries):
       }}
     }});
     
-    // 2. 过滤供应商排行榜行 (对应供应商未勾选，则排行榜隐藏)
-    const lbRows = document.querySelectorAll('.leaderboard-row');
+    const lbRows = document.querySelectorAll('#sheet-full .leaderboard-row');
     lbRows.forEach(lbRow => {{
       const vendorName = lbRow.getAttribute('data-vendor-name');
       const vendorMatch = activeVendors.indexOf(vendorName) !== -1;
