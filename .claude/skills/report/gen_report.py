@@ -178,6 +178,8 @@ def group_by_vendor(rows):
         card_type = get_entry_type(plan_name, pricing_rule, premise)
         limit_type = get_entry_limit(pricing_rule, premise)
         score = calculate_package_score(price_val, card_type, limit_type)
+        multiplier_val = price_val / 7.0
+        input_price_val = price_val * 5.0
 
         if vendor not in vendors:
             vendors[vendor] = []
@@ -192,6 +194,8 @@ def group_by_vendor(rows):
             'card_type': card_type,
             'limit_type': limit_type,
             'score': score,
+            'multiplier_val': multiplier_val,
+            'input_price_val': input_price_val,
         })
     return vendors
 
@@ -513,6 +517,8 @@ def generate_html(vendor_analysis, total_entries):
                 'card_type': e['card_type'],
                 'limit_type': e['limit_type'],
                 'score': e['score'],
+                'multiplier_val': e['multiplier_val'],
+                'input_price_val': e['input_price_val'],
             })
     
     # 按照评分降序，价格升序进行全局排序
@@ -548,7 +554,10 @@ def generate_html(vendor_analysis, total_entries):
 
     # ── 供应商排行榜 ──
     h.append('<h2>供应商排行榜</h2>\n<div class="table-wrap"><table>\n<thead><tr>')
-    h.append('<th>排名</th><th>供应商</th><th>最优折合定价</th><th>定价评级</th><th>周期评级</th><th>限额评级</th><th>综合评语</th>')
+    h.append('<th class="sortable" data-sort="rank">排名</th>'
+             '<th class="sortable" data-sort="text">供应商</th>'
+             '<th class="sortable" data-sort="num">最优折合定价</th>'
+             '<th>定价评级</th><th>周期评级</th><th>限额评级</th><th>综合评语</th>')
     h.append('</tr></thead>\n<tbody>\n')
 
     for i, v in enumerate(vendor_analysis):
@@ -560,9 +569,9 @@ def generate_html(vendor_analysis, total_entries):
         short = v['comment'][:40] + '…' if len(v['comment']) > 40 else v['comment']
 
         h.append(f'<tr class="leaderboard-row" data-vendor-name="{esc(v["name"])}">'
-                 f'<td class="rank-num">{i+1}</td>'
-                 f'<td><strong>{esc(v["name"])}</strong></td>'
-                 f'<td><span class="price-val" style="color:{pr_color}">¥{v["best_price"]:.3f}</span></td>'
+                 f'<td class="rank-num" data-val="{i+1}">{i+1}</td>'
+                 f'<td data-val="{esc(v["name"])}"><strong>{esc(v["name"])}</strong></td>'
+                 f'<td data-val="{v["best_price"]}"><span class="price-val" style="color:{pr_color}">¥{v["best_price"]:.3f}</span></td>'
                  f'<td><span class="badge" style="background:{pr_color}">{pr_label}</span></td>'
                  f'<td><span class="badge" style="background:{pe_color}">{pe_icon} {pe_label}</span></td>'
                  f'<td><span class="badge" style="background:{li_color}">{li_icon} {li_label}</span></td>'
@@ -573,7 +582,16 @@ def generate_html(vendor_analysis, total_entries):
 
     # ── 全局套餐性价比大乱斗 ──
     h.append('<h2>套餐性价比大乱斗</h2>\n<div class="table-wrap"><table id="brawl-table">\n<thead><tr>')
-    h.append('<th>排名</th><th>供应商</th><th>套餐名称</th><th>卡种</th><th>折合定价/官方$1</th><th>综合评分</th><th>限额评级</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th>')
+    h.append('<th class="sortable" data-sort="rank">排名</th>'
+             '<th class="sortable" data-sort="text">供应商</th>'
+             '<th class="sortable" data-sort="text">套餐名称</th>'
+             '<th class="sortable" data-sort="text">卡种</th>'
+             '<th class="sortable" data-sort="num">折合定价/官方$1</th>'
+             '<th class="sortable" data-sort="num">折合官方倍率</th>'
+             '<th class="sortable" data-sort="num">GPT-5.5 1M输入单价(¥)</th>'
+             '<th class="sortable" data-sort="num">综合评分</th>'
+             '<th class="sortable" data-sort="text">限额评级</th>'
+             '<th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th>')
     h.append('</tr></thead>\n<tbody>\n')
 
     limit_colors = {'良心': '#22c55e', '不太地道': '#f59e0b', '恶犬': '#ef4444'}
@@ -592,13 +610,15 @@ def generate_html(vendor_analysis, total_entries):
             score_class = 'score-low'
 
         h.append(f'<tr class="package-row" data-card-type="{esc(p["card_type"])}">'
-                 f'<td class="brawl-rank" style="font-weight:bold;color:#64748b">{i+1}</td>'
-                 f'<td><strong>{esc(p["vendor"])}</strong></td>'
-                 f'<td>{esc(p["plan_name"])}</td>'
-                 f'<td><span class="badge card-type-badge">{esc(p["card_type"])}</span></td>'
-                 f'<td><span class="price-val" style="color:{c}">{esc(p["price_str"])}</span></td>'
-                 f'<td><span class="score-badge {score_class}">{p["score"]} 分</span></td>'
-                 f'<td><span class="badge" style="background:{l_col}">{l_emo} {p["limit_type"]}</span></td>'
+                 f'<td class="brawl-rank" data-val="{i+1}" style="font-weight:bold;color:#64748b">{i+1}</td>'
+                 f'<td data-val="{esc(p["vendor"])}"><strong>{esc(p["vendor"])}</strong></td>'
+                 f'<td data-val="{esc(p["plan_name"])}">{esc(p["plan_name"])}</td>'
+                 f'<td data-val="{esc(p["card_type"])}"><span class="badge card-type-badge">{esc(p["card_type"])}</span></td>'
+                 f'<td data-val="{p["price_val"]}"><span class="price-val" style="color:{c}">{esc(p["price_str"])}</span></td>'
+                 f'<td data-val="{p["multiplier_val"]}"><span class="price-val" style="color:{c}">{p["multiplier_val"]:.4f}x</span></td>'
+                 f'<td data-val="{p["input_price_val"]}"><span class="price-val" style="color:{c}">¥{p["input_price_val"]:.3f}</span></td>'
+                 f'<td data-val="{p["score"]}"><span class="score-badge {score_class}">{p["score"]} 分</span></td>'
+                 f'<td data-val="{esc(p["limit_type"])}"><span class="badge" style="background:{l_col}">{l_emo} {p["limit_type"]}</span></td>'
                  f'<td style="font-size:0.85rem;color:#475569">{esc(p["pricing_rule"])}</td>'
                  f'<td>{esc(p["equiv_usage"])}</td>'
                  f'<td>{esc(p["user_paid"])}</td>'
@@ -634,7 +654,14 @@ def generate_html(vendor_analysis, total_entries):
 
         # 套餐明细表
         h.append('<div class="table-wrap"><table>\n<thead><tr>')
-        h.append('<th>套餐名称</th><th>卡种</th><th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th><th>评分</th><th>限额</th><th>折合定价/官方$1</th>')
+        h.append('<th class="sortable" data-sort="text">套餐名称</th>'
+                 '<th class="sortable" data-sort="text">卡种</th>'
+                 '<th>原定价/原规则</th><th>折合官方用量</th><th>用户实付</th>'
+                 '<th class="sortable" data-sort="num">评分</th>'
+                 '<th class="sortable" data-sort="text">限额</th>'
+                 '<th class="sortable" data-sort="num">折合定价/官方$1</th>'
+                 '<th class="sortable" data-sort="num">折合官方倍率</th>'
+                 '<th class="sortable" data-sort="num">GPT-5.5 1M输入单价(¥)</th>')
         h.append('</tr></thead>\n<tbody>\n')
 
         for e in sorted(v['entries'], key=lambda x: x['price_val']):
@@ -650,14 +677,16 @@ def generate_html(vendor_analysis, total_entries):
                 score_class = 'score-low'
 
             h.append(f'<tr class="package-row" data-card-type="{esc(e["card_type"])}">'
-                     f'<td><strong>{esc(e["plan_name"])}</strong></td>'
-                     f'<td><span class="badge card-type-badge">{esc(e["card_type"])}</span></td>'
+                     f'<td data-val="{esc(e["plan_name"])}"><strong>{esc(e["plan_name"])}</strong></td>'
+                     f'<td data-val="{esc(e["card_type"])}"><span class="badge card-type-badge">{esc(e["card_type"])}</span></td>'
                      f'<td>{esc(e["pricing_rule"])}</td>'
                      f'<td>{esc(e["equiv_usage"])}</td>'
                      f'<td>{esc(e["user_paid"])}</td>'
-                     f'<td><span class="score-badge {score_class}">{e["score"]} 分</span></td>'
-                     f'<td><span class="badge" style="background:{l_col}">{l_emo} {e["limit_type"]}</span></td>'
-                     f'<td><span class="price-val" style="color:{c}">{esc(e["price_str"])}</span></td>'
+                     f'<td data-val="{e["score"]}"><span class="score-badge {score_class}">{e["score"]} 分</span></td>'
+                     f'<td data-val="{esc(e["limit_type"])}"><span class="badge" style="background:{l_col}">{l_emo} {e["limit_type"]}</span></td>'
+                     f'<td data-val="{e["price_val"]}"><span class="price-val" style="color:{c}">{esc(e["price_str"])}</span></td>'
+                     f'<td data-val="{e["multiplier_val"]}"><span class="price-val" style="color:{c}">{e["multiplier_val"]:.4f}x</span></td>'
+                     f'<td data-val="{e["input_price_val"]}"><span class="price-val" style="color:{c}">¥{e["input_price_val"]:.3f}</span></td>'
                      f'</tr>\n')
 
         h.append('</tbody></table></div>\n</div>\n')
@@ -750,11 +779,76 @@ def generate_html(vendor_analysis, total_entries):
     }});
   }}
   
+  window.updateFilter = updateFilter;
+  
   chks.forEach(chk => {{
     chk.addEventListener('change', updateFilter);
   }});
   
   updateFilter();
+
+  // Initialize sorting
+  initSorting();
+  
+  function initSorting() {{
+    document.querySelectorAll('table').forEach(table => {{
+      const isLeaderboard = table.querySelector('.leaderboard-row') !== null;
+      const rowSelector = isLeaderboard ? '.leaderboard-row' : '.package-row';
+      const tbody = table.querySelector('tbody');
+      if (!tbody) return;
+      const headers = table.querySelectorAll('thead th.sortable');
+      let currentSort = {{ index: -1, asc: true }};
+
+      headers.forEach(header => {{
+        const indicator = document.createElement('span');
+        indicator.className = 'sort-indicator';
+        indicator.style.marginLeft = '4px';
+        indicator.style.fontSize = '0.75rem';
+        indicator.style.color = '#94a3b8';
+        indicator.textContent = '⇅';
+        header.appendChild(indicator);
+        header.style.cursor = 'pointer';
+        
+        const colIndex = Array.from(header.parentNode.children).indexOf(header);
+
+        header.addEventListener('click', () => {{
+          const type = header.getAttribute('data-sort');
+          const rows = Array.from(tbody.querySelectorAll(rowSelector));
+          
+          const isAsc = currentSort.index === colIndex ? !currentSort.asc : true;
+          currentSort = {{ index: colIndex, asc: isAsc }};
+
+          headers.forEach(h => {{
+            const ind = h.querySelector('.sort-indicator');
+            if (ind) ind.textContent = '⇅';
+          }});
+          const currentIndicator = header.querySelector('.sort-indicator');
+          if (currentIndicator) {{
+            currentIndicator.textContent = isAsc ? '▲' : '▼';
+          }}
+
+          rows.sort((rowA, rowB) => {{
+            const cellA = rowA.children[colIndex];
+            const cellB = rowB.children[colIndex];
+            let valA = cellA ? cellA.getAttribute('data-val') : '';
+            let valB = cellB ? cellB.getAttribute('data-val') : '';
+
+            if (type === 'num') {{
+              return (parseFloat(valA) - parseFloat(valB)) * (isAsc ? 1 : -1);
+            }} else if (type === 'rank') {{
+              return (parseInt(valA) - parseInt(valB)) * (isAsc ? 1 : -1);
+            }} else {{
+              return valA.localeCompare(valB, 'zh-CN') * (isAsc ? 1 : -1);
+            }}
+          }});
+
+          rows.forEach(row => tbody.appendChild(row));
+
+          updateFilter();
+        }});
+      }});
+    }});
+  }}
 }})();
 </script>
 </body>
