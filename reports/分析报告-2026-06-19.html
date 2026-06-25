@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 中转站比价 analysis 报告 - 2026-06-19</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:-apple-system,"Noto Sans SC","Microsoft YaHei",sans-serif;
+  background:#f8fafc;color:#1e293b;
+  padding:1.5rem;max-width:100%;margin:0;
+  line-height:1.6;
+}
+h1{font-size:1.75rem;font-weight:700;margin-bottom:0.5rem;color:#0f172a}
+h2{font-size:1.35rem;font-weight:600;margin:2rem 0 1rem;color:#0f172a;
+   border-bottom:2px solid #e2e8f0;padding-bottom:0.5rem}
+h3{font-size:1.15rem;font-weight:600;color:#0f172a;display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap}
+.meta{color:#64748b;margin-bottom:1.5rem;font-size:0.95rem}
+.filter-panel {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 2px solid #e2e8f0;
+}
+.filter-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+}
+.filter-chk {
+  width: 1.1rem;
+  height: 1.1rem;
+  cursor: pointer;
+}
+.table-wrap{overflow-x:auto;margin:1rem 0}
+table{width:100%;border-collapse:collapse;font-size:0.9rem}
+th{background:#f1f5f9;font-weight:600;text-align:left;padding:0.65rem 0.75rem;
+   border-bottom:2px solid #cbd5e1;white-space:nowrap}
+td{padding:0.6rem 0.75rem;border-bottom:1px solid #e2e8f0;vertical-align:top}
+tbody tr:nth-child(even){background:#f8fafc}
+tbody tr:hover{background:#e2e8f0}
+.badge{display:inline-block;padding:0.2rem 0.65rem;border-radius:9999px;
+       color:#fff;font-size:0.8rem;font-weight:600;white-space:nowrap}
+.score-badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-align: center;
+}
+.score-high {
+  background: #dcfce7;
+  color: #15803d;
+}
+.score-medium {
+  background: #fef9c3;
+  color: #a16207;
+}
+.score-low {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+.card-type-badge {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+.vendor-card{background:#fff;border-radius:12px;
+              box-shadow:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.06);
+              padding:1.5rem;margin-bottom:1.25rem}
+.ratings{display:flex;gap:0.75rem;flex-wrap:wrap;margin:0.75rem 0}
+.rating-item{display:flex;align-items:center;gap:0.4rem;font-size:0.9rem}
+.rating-label{color:#64748b}
+.comment{color:#475569;margin:0.75rem 0 1rem;line-height:1.7;font-size:0.95rem;
+         background:#f8fafc;padding:0.75rem 1rem;border-radius:8px;border-left:3px solid #cbd5e1}
+.price-val{font-weight:700}
+.rank-num{font-weight:700;font-size:1.1rem;color:#64748b}
+.criteria-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1rem;margin:1rem 0}
+.criteria-card{background:#fff;border-radius:10px;padding:1.25rem;
+               box-shadow:0 1px 2px rgba(0,0,0,0.06)}
+.criteria-card h4{font-size:1rem;margin-bottom:0.75rem;color:#334155}
+.criteria-card td,.criteria-card th{padding:0.4rem 0.6rem}
+.warning-tip{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;
+             padding:0.6rem 1rem;color:#1e40af;font-size:0.85rem;margin-top:0.5rem}
+@media(max-width:768px){
+  body{padding:1rem}
+  h1{font-size:1.35rem}
+  .ratings{flex-direction:column;gap:0.5rem}
+  td,th{padding:0.4rem 0.5rem;font-size:0.82rem}
+}
+
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #cbd5e1;
+  padding-bottom: 0.5rem;
+}
+.tab-btn {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  padding: 0.5rem 1.25rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.tab-btn:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+.tab-btn.active {
+  background: #3b82f6;
+  color: #ffffff;
+  border-color: #3b82f6;
+}
+.tab-content {
+  display: none;
+}
+.tab-content.active {
+  display: block;
+}
+
+.btn-select-all {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  font-weight: 500;
+  margin-right: 0.25rem;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+}
+</style>
+</head>
+<body>
+<h1>AI 中转站比价分析报告</h1>
+<p class="meta">生成日期：2026-06-19　·　数据条目：67 条　·　覆盖供应商：15 家</p>
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('sheet-leaderboard')">🏆 供应商排行榜</button>
+  <button class="tab-btn" onclick="switchTab('sheet-full')">📊 套餐性价比全览</button>
+</div>
+<div id="sheet-leaderboard" class="tab-content active">
+  <h2>供应商排行榜 (静态全览)</h2>
+  <div class="table-wrap"><table id="static-leaderboard-table">
+<thead><tr><th class="sortable" data-sort="rank">排名</th><th class="sortable" data-sort="text">供应商</th><th class="sortable" data-sort="num">最优折合定价</th><th>定价评级</th><th>周期评级</th><th>限额评级</th><th>综合评语</th></tr></thead>
+<tbody>
+<tr class="leaderboard-row" data-vendor-name="ai.input.im"><td class="rank-num" data-val="1">1</td><td data-val="ai.input.im"><strong>ai.input.im</strong></td><td data-val="0.012"><span class="price-val" style="color:#3b82f6">¥0.012</span></td><td><span class="badge" style="background:#3b82f6">捡漏</span></td><td><span class="badge" style="background:#3b82f6">📅 合适</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td style="color:#64748b;font-size:0.85rem">折合定价低至¥0.012堪称捡漏，需警惕额度是否用得完，月卡+周期合理、使用充裕…</td></tr>
+<tr class="leaderboard-row" data-vendor-name="krill-ai.com"><td class="rank-num" data-val="2">2</td><td data-val="krill-ai.com"><strong>krill-ai.com</strong></td><td data-val="0.03"><span class="price-val" style="color:#3b82f6">¥0.030</span></td><td><span class="badge" style="background:#3b82f6">捡漏</span></td><td><span class="badge" style="background:#f59e0b">📆 还行</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价低至¥0.030堪称捡漏，需警惕额度是否用得完，仅有周卡可选，需把握使用…</td></tr>
+<tr class="leaderboard-row" data-vendor-name="666ai.top"><td class="rank-num" data-val="3">3</td><td data-val="666ai.top"><strong>666ai.top</strong></td><td data-val="0.08"><span class="price-val" style="color:#3b82f6">¥0.080</span></td><td><span class="badge" style="background:#3b82f6">捡漏</span></td><td><span class="badge" style="background:#22c55e">🔓 最佳</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价低至¥0.080堪称捡漏，需警惕额度是否用得完，散充永不过期是最大加分项…</td></tr>
+<tr class="leaderboard-row" data-vendor-name="UniVibe"><td class="rank-num" data-val="4">4</td><td data-val="UniVibe"><strong>UniVibe</strong></td><td data-val="0.084"><span class="price-val" style="color:#3b82f6">¥0.084</span></td><td><span class="badge" style="background:#3b82f6">捡漏</span></td><td><span class="badge" style="background:#3b82f6">📅 合适</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价低至¥0.084堪称捡漏，需警惕额度是否用得完，月卡+周期合理、使用充裕…</td></tr>
+<tr class="leaderboard-row" data-vendor-name="luciferai.cc"><td class="rank-num" data-val="5">5</td><td data-val="luciferai.cc"><strong>luciferai.cc</strong></td><td data-val="0.12"><span class="price-val" style="color:#f59e0b">¥0.120</span></td><td><span class="badge" style="background:#f59e0b">正常价</span></td><td><span class="badge" style="background:#22c55e">🔓 最佳</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价¥0.120处于正常区间，散充永不过期是最大加分项，无恶性限额整体友好。…</td></tr>
+<tr class="leaderboard-row" data-vendor-name="toolcode.top"><td class="rank-num" data-val="6">6</td><td data-val="toolcode.top"><strong>toolcode.top</strong></td><td data-val="0.13"><span class="price-val" style="color:#f59e0b">¥0.130</span></td><td><span class="badge" style="background:#f59e0b">正常价</span></td><td><span class="badge" style="background:#22c55e">🔓 最佳</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价¥0.130处于正常区间，散充永不过期是最大加分项，无恶性限额整体友好。…</td></tr>
+<tr class="leaderboard-row" data-vendor-name="iKun"><td class="rank-num" data-val="7">7</td><td data-val="iKun"><strong>iKun</strong></td><td data-val="0.137"><span class="price-val" style="color:#f59e0b">¥0.137</span></td><td><span class="badge" style="background:#f59e0b">正常价</span></td><td><span class="badge" style="background:#3b82f6">📅 合适</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价¥0.137处于正常区间，月卡+周期合理、使用充裕，无恶性限额整体友好。…</td></tr>
+<tr class="leaderboard-row" data-vendor-name="FreeModel.dev"><td class="rank-num" data-val="8">8</td><td data-val="FreeModel.dev"><strong>FreeModel.dev</strong></td><td data-val="0.16"><span class="price-val" style="color:#f59e0b">¥0.160</span></td><td><span class="badge" style="background:#f59e0b">正常价</span></td><td><span class="badge" style="background:#22c55e">🔓 最佳</span></td><td><span class="badge" style="background:#ef4444">🔗 恶犬</span></td><td style="color:#64748b;font-size:0.85rem">折合定价¥0.160处于正常区间，散充永不过期是最大加分项，存在日限或5h限额体…</td></tr>
+<tr class="leaderboard-row" data-vendor-name="zhishu.dev"><td class="rank-num" data-val="9">9</td><td data-val="zhishu.dev"><strong>zhishu.dev</strong></td><td data-val="0.195"><span class="price-val" style="color:#f59e0b">¥0.195</span></td><td><span class="badge" style="background:#f59e0b">正常价</span></td><td><span class="badge" style="background:#22c55e">🔓 最佳</span></td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td style="color:#64748b;font-size:0.85rem">折合定价¥0.195处于正常区间，散充永不过期是最大加分项，存在周限额使用受限，…</td></tr>
+<tr class="leaderboard-row" data-vendor-name="chaoye.xyz"><td class="rank-num" data-val="10">10</td><td data-val="chaoye.xyz"><strong>chaoye.xyz</strong></td><td data-val="0.2"><span class="price-val" style="color:#f59e0b">¥0.200</span></td><td><span class="badge" style="background:#f59e0b">正常价</span></td><td><span class="badge" style="background:#22c55e">🔓 最佳</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价¥0.200处于正常区间，散充永不过期是最大加分项，无恶性限额整体友好。…</td></tr>
+<tr class="leaderboard-row" data-vendor-name="autocode.space"><td class="rank-num" data-val="11">11</td><td data-val="autocode.space"><strong>autocode.space</strong></td><td data-val="0.3"><span class="price-val" style="color:#f59e0b">¥0.300</span></td><td><span class="badge" style="background:#f59e0b">正常价</span></td><td><span class="badge" style="background:#22c55e">🔓 最佳</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价¥0.300处于正常区间，散充永不过期是最大加分项，无恶性限额整体友好，…</td></tr>
+<tr class="leaderboard-row" data-vendor-name="relayai.asia"><td class="rank-num" data-val="12">12</td><td data-val="relayai.asia"><strong>relayai.asia</strong></td><td data-val="0.385"><span class="price-val" style="color:#f59e0b">¥0.385</span></td><td><span class="badge" style="background:#f59e0b">正常价</span></td><td><span class="badge" style="background:#22c55e">🔓 最佳</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价¥0.385处于正常区间，散充永不过期是最大加分项，无恶性限额整体友好。…</td></tr>
+<tr class="leaderboard-row" data-vendor-name="link-ai.cc"><td class="rank-num" data-val="13">13</td><td data-val="link-ai.cc"><strong>link-ai.cc</strong></td><td data-val="0.432"><span class="price-val" style="color:#f59e0b">¥0.432</span></td><td><span class="badge" style="background:#f59e0b">正常价</span></td><td><span class="badge" style="background:#22c55e">🔓 最佳</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价¥0.432处于正常区间，散充永不过期是最大加分项，无恶性限额整体友好，…</td></tr>
+<tr class="leaderboard-row" data-vendor-name="apikey.fun"><td class="rank-num" data-val="14">14</td><td data-val="apikey.fun"><strong>apikey.fun</strong></td><td data-val="0.571"><span class="price-val" style="color:#ef4444">¥0.571</span></td><td><span class="badge" style="background:#ef4444">噶韭菜</span></td><td><span class="badge" style="background:#22c55e">🔓 最佳</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价高达¥0.571属于韭菜价位，散充永不过期是最大加分项，无恶性限额整体友…</td></tr>
+<tr class="leaderboard-row" data-vendor-name="HyperAPI.cc"><td class="rank-num" data-val="15">15</td><td data-val="HyperAPI.cc"><strong>HyperAPI.cc</strong></td><td data-val="1.273"><span class="price-val" style="color:#ef4444">¥1.273</span></td><td><span class="badge" style="background:#ef4444">噶韭菜</span></td><td><span class="badge" style="background:#3b82f6">📅 合适</span></td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="color:#64748b;font-size:0.85rem">折合定价高达¥1.273属于韭菜价位，月卡+周期合理、使用充裕，无恶性限额整体友…</td></tr>
+</tbody></table></div>
+
+  <h2>评级标准说明</h2>
+  <div class="criteria-grid">
+<div class="criteria-card">
+<h4>💰 定价评级</h4>
+<table>
+<thead><tr><th>区间</th><th>评级</th></tr></thead>
+<tbody>
+<tr><td>&lt; ¥0.1</td><td><span class="badge" style="background:#3b82f6">捡漏</span></td></tr>
+<tr><td>≈ ¥0.1</td><td><span class="badge" style="background:#22c55e">实惠</span></td></tr>
+<tr><td>¥0.1 ~ ¥0.5</td><td><span class="badge" style="background:#f59e0b">正常价</span></td></tr>
+<tr><td>≥ ¥0.5</td><td><span class="badge" style="background:#ef4444">噶韭菜</span></td></tr>
+</tbody></table>
+<div class="warning-tip">⚠️ "捡漏"需警惕：理论价格低但额度可能花不完，实际性价比未必高。</div>
+</div>
+
+<div class="criteria-card">
+<h4>📅 周期评级</h4>
+<table>
+<thead><tr><th>周期类型</th><th>评级</th></tr></thead>
+<tbody>
+<tr><td>散充（无过期）</td><td><span class="badge" style="background:#22c55e">🔓 最佳</span></td></tr>
+<tr><td>月卡 / 季卡 / 年卡</td><td><span class="badge" style="background:#3b82f6">📅 合适</span></td></tr>
+<tr><td>周卡</td><td><span class="badge" style="background:#f59e0b">📆 还行</span></td></tr>
+<tr><td>日卡</td><td><span class="badge" style="background:#ef4444">⚠️ 慎之又慎</span></td></tr>
+</tbody></table>
+</div>
+
+<div class="criteria-card">
+<h4>🔒 限额评级</h4>
+<table>
+<thead><tr><th>限额类型</th><th>评级</th></tr></thead>
+<tbody>
+<tr><td>周期内随便用</td><td><span class="badge" style="background:#22c55e">🟢 良心</span></td></tr>
+<tr><td>仅周（7天）限额</td><td><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td></tr>
+<tr><td>有日限 / 5h限额</td><td><span class="badge" style="background:#ef4444">🔗 恶犬</span></td></tr>
+</tbody></table>
+<div class="warning-tip">⚠️ 日/周限额若折合每日额度&gt; $50 官方等值，则会宽免至“不太地道”。</div>
+</div>
+</div>
+</div>
+<div id="sheet-full" class="tab-content">
+  <div class="filter-panel">
+    <div style="width: 100%; display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: center; margin-bottom: 0.5rem;">
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <strong>筛选卡种：</strong>
+        <button type="button" class="btn-select-all" onclick="setCheckboxes('.filter-chk', true)">全选</button>
+        <button type="button" class="btn-select-all" onclick="setCheckboxes('.filter-chk', false)">全不选</button>
+      </div>
+      <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: center;">
+        <label class="filter-label"><input type="checkbox" class="filter-chk" value="散充" checked> 散充</label><label class="filter-label"><input type="checkbox" class="filter-chk" value="日卡" checked> 日卡</label><label class="filter-label"><input type="checkbox" class="filter-chk" value="周卡" checked> 周卡</label><label class="filter-label"><input type="checkbox" class="filter-chk" value="月卡" checked> 月卡</label><label class="filter-label"><input type="checkbox" class="filter-chk" value="季卡" checked> 季卡</label><label class="filter-label"><input type="checkbox" class="filter-chk" value="年卡" checked> 年卡</label>
+      </div>
+    </div>
+    <div style="width: 100%; display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: center; border-top: 1px solid #e2e8f0; padding-top: 0.5rem;">
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <strong>筛选商家：</strong>
+        <button type="button" class="btn-select-all" onclick="setCheckboxes('.filter-vendor-chk', true)">全选</button>
+        <button type="button" class="btn-select-all" onclick="setCheckboxes('.filter-vendor-chk', false)">全不选</button>
+      </div>
+      <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: center;"><label class="filter-label"><input type="checkbox" class="filter-vendor-chk" value="ai.input.im" checked> ai.input.im</label>
+  <label class="filter-label"><input type="checkbox" class="filter-vendor-chk" value="krill-ai.com" checked> krill-ai.com</label>
+  <label class="filter-label"><input type="checkbox" class="filter-vendor-chk" value="666ai.top" checked> 666ai.top</label>
+  <label class="filter-label"><input type="checkbox" class="filter-vendor-chk" value="UniVibe" checked> UniVibe</label>
+  <label class="filter-label"><input type="checkbox" class="filter-vendor-chk" value="luciferai.cc" checked> luciferai.cc</label>
+  <label class="filter-label"><input type="checkbox" class="filter-vendor-chk" value="toolcode.top" checked> toolcode.top</label>
+  <label class="filter-label"><input type="checkbox" class="filter-vendor-chk" value="iKun" checked> iKun</label>
+  <label class="filter-label"><input type="checkbox" class="filter-vendor-chk" value="FreeModel.dev" checked> FreeModel.dev</label>
+  <label class="filter-label"><input type="checkbox" class="filter-vendor-chk" value="zhishu.dev" checked> zhishu.dev</label>
+  <label class="filter-label"><input type="checkbox" class="filter-vendor-chk" value="chaoye.xyz" checked> chaoye.xyz</label>
+  <label class="filter-label"><input type="checkbox" class="filter-vendor-chk" value="autocode.space" checked> autocode.space</label>
+  <label class="filter-label"><input type="checkbox" class="filter-vendor-chk" value="relayai.asia" checked> relayai.asia</label>
+  <label class="filter-label"><input type="checkbox" class="filter-vendor-chk" value="link-ai.cc" checked> link-ai.cc</label>
+  <label class="filter-label"><input type="checkbox" class="filter-vendor-chk" value="apikey.fun" checked> apikey.fun</label>
+  <label class="filter-label"><input type="checkbox" class="filter-vendor-chk" value="HyperAPI.cc" checked> HyperAPI.cc</label></div>
+    </div>
+  </div>
+  <h2>套餐性价比大乱斗</h2>
+  <div class="table-wrap"><table id="brawl-table">
+  <thead><tr>
+    <th class="sortable" data-sort="rank">排名</th>
+    <th class="sortable" data-sort="text">供应商</th>
+    <th class="sortable" data-sort="text">套餐名称</th>
+    <th class="sortable" data-sort="text">卡种</th>
+    <th class="sortable" data-sort="num">折合定价/官方$1</th>
+    <th class="sortable" data-sort="num">折合官方倍率</th>
+    <th class="sortable" data-sort="num">GPT-5.5 1M输入单价(¥)</th>
+    <th>等效官方额度</th>
+    <th>实际付费</th>
+    <th class="sortable" data-sort="text">限额评级</th>
+    <th>方案介绍</th>
+    <th class="sortable" data-sort="num">综合评分</th>
+  </tr></thead><tbody><tr class="package-row" data-card-type="散充" data-vendor-name="666ai.top"><td class="brawl-rank" data-val="1" style="font-weight:bold;color:#64748b">1</td><td data-val="666ai.top"><strong>666ai.top</strong></td><td data-val="散充（OpenAI Team号池）">散充（OpenAI Team号池）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.08"><span class="price-val" style="color:#3b82f6">¥0.080</span></td><td data-val="0.011428571428571429"><span class="price-val" style="color:#3b82f6">0.0114x</span></td><td data-val="0.4"><span class="price-val" style="color:#3b82f6">¥0.400</span></td><td>$12.50</td><td>¥1</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥1=$1余额；0.08x倍率；永不过期</td><td data-val="98.6"><span class="score-badge score-high">98.6 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="666ai.top"><td class="brawl-rank" data-val="2" style="font-weight:bold;color:#64748b">2</td><td data-val="666ai.top"><strong>666ai.top</strong></td><td data-val="散充（OpenAI Plus号池）">散充（OpenAI Plus号池）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.12"><span class="price-val" style="color:#f59e0b">¥0.120</span></td><td data-val="0.017142857142857144"><span class="price-val" style="color:#f59e0b">0.0171x</span></td><td data-val="0.6"><span class="price-val" style="color:#f59e0b">¥0.600</span></td><td>$8.33</td><td>¥1</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥1=$1余额；0.12x倍率；永不过期</td><td data-val="96.6"><span class="score-badge score-high">96.6 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="luciferai.cc"><td class="brawl-rank" data-val="3" style="font-weight:bold;color:#64748b">3</td><td data-val="luciferai.cc"><strong>luciferai.cc</strong></td><td data-val="散充（plus分组）">散充（plus分组）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.12"><span class="price-val" style="color:#f59e0b">¥0.120</span></td><td data-val="0.017142857142857144"><span class="price-val" style="color:#f59e0b">0.0171x</span></td><td data-val="0.6"><span class="price-val" style="color:#f59e0b">¥0.600</span></td><td>$8.33</td><td>¥1</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥10买$200额度(¥0.05/$)；2.4x倍率</td><td data-val="96.6"><span class="score-badge score-high">96.6 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="toolcode.top"><td class="brawl-rank" data-val="4" style="font-weight:bold;color:#64748b">4</td><td data-val="toolcode.top"><strong>toolcode.top</strong></td><td data-val="散充（GPT福利组）">散充（GPT福利组）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.13"><span class="price-val" style="color:#f59e0b">¥0.130</span></td><td data-val="0.018571428571428572"><span class="price-val" style="color:#f59e0b">0.0186x</span></td><td data-val="0.65"><span class="price-val" style="color:#f59e0b">¥0.650</span></td><td>$7.69</td><td>¥1</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥1=$1余额；0.13x倍率</td><td data-val="96.1"><span class="score-badge score-high">96.1 分</span></td></tr>
+<tr class="package-row" data-card-type="月卡" data-vendor-name="UniVibe"><td class="brawl-rank" data-val="5" style="font-weight:bold;color:#64748b">5</td><td data-val="UniVibe"><strong>UniVibe</strong></td><td data-val="Air-PRO（按恢复上限）">Air-PRO（按恢复上限）</td><td data-val="月卡"><span class="badge card-type-badge">月卡</span></td><td data-val="0.084"><span class="price-val" style="color:#3b82f6">¥0.084</span></td><td data-val="0.012"><span class="price-val" style="color:#3b82f6">0.0120x</span></td><td data-val="0.42000000000000004"><span class="price-val" style="color:#3b82f6">¥0.420</span></td><td>$1,212/月</td><td>¥102.22</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">$15/月；约727200积分/月</td><td data-val="95.4"><span class="score-badge score-high">95.4 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="toolcode.top"><td class="brawl-rank" data-val="6" style="font-weight:bold;color:#64748b">6</td><td data-val="toolcode.top"><strong>toolcode.top</strong></td><td data-val="散充（GPT-Plus+Pro-稳定号源）">散充（GPT-Plus+Pro-稳定号源）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.148"><span class="price-val" style="color:#f59e0b">¥0.148</span></td><td data-val="0.02114285714285714"><span class="price-val" style="color:#f59e0b">0.0211x</span></td><td data-val="0.74"><span class="price-val" style="color:#f59e0b">¥0.740</span></td><td>$6.76</td><td>¥1</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥1=$1余额；0.148x倍率</td><td data-val="95.3"><span class="score-badge score-high">95.3 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="toolcode.top"><td class="brawl-rank" data-val="7" style="font-weight:bold;color:#64748b">7</td><td data-val="toolcode.top"><strong>toolcode.top</strong></td><td data-val="散充（GPT-Plus-稳定快速）">散充（GPT-Plus-稳定快速）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.158"><span class="price-val" style="color:#f59e0b">¥0.158</span></td><td data-val="0.022571428571428572"><span class="price-val" style="color:#f59e0b">0.0226x</span></td><td data-val="0.79"><span class="price-val" style="color:#f59e0b">¥0.790</span></td><td>$6.33</td><td>¥1</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥1=$1余额；0.158x倍率</td><td data-val="94.8"><span class="score-badge score-high">94.8 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="luciferai.cc"><td class="brawl-rank" data-val="8" style="font-weight:bold;color:#64748b">8</td><td data-val="luciferai.cc"><strong>luciferai.cc</strong></td><td data-val="散充（正价pro分组）">散充（正价pro分组）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.19"><span class="price-val" style="color:#f59e0b">¥0.190</span></td><td data-val="0.027142857142857142"><span class="price-val" style="color:#f59e0b">0.0271x</span></td><td data-val="0.95"><span class="price-val" style="color:#f59e0b">¥0.950</span></td><td>$5.26</td><td>¥1</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥10买$200额度(¥0.05/$)；3.8x倍率</td><td data-val="93.2"><span class="score-badge score-high">93.2 分</span></td></tr>
+<tr class="package-row" data-card-type="周卡" data-vendor-name="krill-ai.com"><td class="brawl-rank" data-val="9" style="font-weight:bold;color:#64748b">9</td><td data-val="krill-ai.com"><strong>krill-ai.com</strong></td><td data-val="尊享周卡（10人团）">尊享周卡（10人团）</td><td data-val="周卡"><span class="badge card-type-badge">周卡</span></td><td data-val="0.03"><span class="price-val" style="color:#3b82f6">¥0.030</span></td><td data-val="0.004285714285714286"><span class="price-val" style="color:#3b82f6">0.0043x</span></td><td data-val="0.15"><span class="price-val" style="color:#3b82f6">¥0.150</span></td><td>$5,600/周</td><td>¥166</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥166/周；$1120额度</td><td data-val="93.0"><span class="score-badge score-high">93.0 分</span></td></tr>
+<tr class="package-row" data-card-type="周卡" data-vendor-name="krill-ai.com"><td class="brawl-rank" data-val="10" style="font-weight:bold;color:#64748b">10</td><td data-val="krill-ai.com"><strong>krill-ai.com</strong></td><td data-val="尊享周卡（单买）">尊享周卡（单买）</td><td data-val="周卡"><span class="badge card-type-badge">周卡</span></td><td data-val="0.04"><span class="price-val" style="color:#3b82f6">¥0.040</span></td><td data-val="0.005714285714285714"><span class="price-val" style="color:#3b82f6">0.0057x</span></td><td data-val="0.2"><span class="price-val" style="color:#3b82f6">¥0.200</span></td><td>$4,200/周</td><td>¥166</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥166/周；$840额度</td><td data-val="93.0"><span class="score-badge score-high">93.0 分</span></td></tr>
+<tr class="package-row" data-card-type="月卡" data-vendor-name="UniVibe"><td class="brawl-rank" data-val="11" style="font-weight:bold;color:#64748b">11</td><td data-val="UniVibe"><strong>UniVibe</strong></td><td data-val="Air-PRO（按恢复下限）">Air-PRO（按恢复下限）</td><td data-val="月卡"><span class="badge card-type-badge">月卡</span></td><td data-val="0.134"><span class="price-val" style="color:#f59e0b">¥0.134</span></td><td data-val="0.019142857142857145"><span class="price-val" style="color:#f59e0b">0.0191x</span></td><td data-val="0.67"><span class="price-val" style="color:#f59e0b">¥0.670</span></td><td>$762/月</td><td>¥102.22</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">$15/月；约457200积分/月</td><td data-val="92.9"><span class="score-badge score-high">92.9 分</span></td></tr>
+<tr class="package-row" data-card-type="月卡" data-vendor-name="iKun"><td class="brawl-rank" data-val="12" style="font-weight:bold;color:#64748b">12</td><td data-val="iKun"><strong>iKun</strong></td><td data-val="GPT PLUS ultra月卡 3000刀">GPT PLUS ultra月卡 3000刀</td><td data-val="月卡"><span class="badge card-type-badge">月卡</span></td><td data-val="0.137"><span class="price-val" style="color:#f59e0b">¥0.137</span></td><td data-val="0.019571428571428573"><span class="price-val" style="color:#f59e0b">0.0196x</span></td><td data-val="0.685"><span class="price-val" style="color:#f59e0b">¥0.685</span></td><td>$2,000/月</td><td>¥273</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥273/月；$3000额度</td><td data-val="92.8"><span class="score-badge score-high">92.8 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="666ai.top"><td class="brawl-rank" data-val="13" style="font-weight:bold;color:#64748b">13</td><td data-val="666ai.top"><strong>666ai.top</strong></td><td data-val="散充（OpenAI Pro号池）">散充（OpenAI Pro号池）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.2"><span class="price-val" style="color:#f59e0b">¥0.200</span></td><td data-val="0.028571428571428574"><span class="price-val" style="color:#f59e0b">0.0286x</span></td><td data-val="1.0"><span class="price-val" style="color:#f59e0b">¥1.000</span></td><td>$5.00</td><td>¥1</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥1=$1余额；0.2x倍率；永不过期</td><td data-val="92.8"><span class="score-badge score-high">92.8 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="chaoye.xyz"><td class="brawl-rank" data-val="14" style="font-weight:bold;color:#64748b">14</td><td data-val="chaoye.xyz"><strong>chaoye.xyz</strong></td><td data-val="散充（GPT 最低倍率）">散充（GPT 最低倍率）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.2"><span class="price-val" style="color:#f59e0b">¥0.200</span></td><td data-val="0.028571428571428574"><span class="price-val" style="color:#f59e0b">0.0286x</span></td><td data-val="1.0"><span class="price-val" style="color:#f59e0b">¥1.000</span></td><td>$5</td><td>¥1</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥1=1余额；GPT倍率0.2x</td><td data-val="92.8"><span class="score-badge score-high">92.8 分</span></td></tr>
+<tr class="package-row" data-card-type="月卡" data-vendor-name="iKun"><td class="brawl-rank" data-val="15" style="font-weight:bold;color:#64748b">15</td><td data-val="iKun"><strong>iKun</strong></td><td data-val="Pro顶配月卡">Pro顶配月卡</td><td data-val="月卡"><span class="badge card-type-badge">月卡</span></td><td data-val="0.141"><span class="price-val" style="color:#f59e0b">¥0.141</span></td><td data-val="0.02014285714285714"><span class="price-val" style="color:#f59e0b">0.0201x</span></td><td data-val="0.705"><span class="price-val" style="color:#f59e0b">¥0.705</span></td><td>$1,200/月</td><td>¥169</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥169/月；$1800额度</td><td data-val="92.6"><span class="score-badge score-high">92.6 分</span></td></tr>
+<tr class="package-row" data-card-type="月卡" data-vendor-name="iKun"><td class="brawl-rank" data-val="16" style="font-weight:bold;color:#64748b">16</td><td data-val="iKun"><strong>iKun</strong></td><td data-val="GPT-Plus编程月卡">GPT-Plus编程月卡</td><td data-val="月卡"><span class="badge card-type-badge">月卡</span></td><td data-val="0.15"><span class="price-val" style="color:#f59e0b">¥0.150</span></td><td data-val="0.02142857142857143"><span class="price-val" style="color:#f59e0b">0.0214x</span></td><td data-val="0.75"><span class="price-val" style="color:#f59e0b">¥0.750</span></td><td>$400/月</td><td>¥60</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥60/月；$600额度</td><td data-val="92.2"><span class="score-badge score-high">92.2 分</span></td></tr>
+<tr class="package-row" data-card-type="月卡" data-vendor-name="iKun"><td class="brawl-rank" data-val="17" style="font-weight:bold;color:#64748b">17</td><td data-val="iKun"><strong>iKun</strong></td><td data-val="GPT-Lite尝鲜月卡">GPT-Lite尝鲜月卡</td><td data-val="月卡"><span class="badge card-type-badge">月卡</span></td><td data-val="0.15"><span class="price-val" style="color:#f59e0b">¥0.150</span></td><td data-val="0.02142857142857143"><span class="price-val" style="color:#f59e0b">0.0214x</span></td><td data-val="0.75"><span class="price-val" style="color:#f59e0b">¥0.750</span></td><td>$133.33/月</td><td>¥20</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥20/月；$200额度</td><td data-val="92.2"><span class="score-badge score-high">92.2 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="toolcode.top"><td class="brawl-rank" data-val="18" style="font-weight:bold;color:#64748b">18</td><td data-val="toolcode.top"><strong>toolcode.top</strong></td><td data-val="散充（GPT-Pro-官池）">散充（GPT-Pro-官池）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.239"><span class="price-val" style="color:#f59e0b">¥0.239</span></td><td data-val="0.03414285714285714"><span class="price-val" style="color:#f59e0b">0.0341x</span></td><td data-val="1.1949999999999998"><span class="price-val" style="color:#f59e0b">¥1.195</span></td><td>$4.18</td><td>¥1</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥1=$1余额；0.239x倍率</td><td data-val="90.9"><span class="score-badge score-high">90.9 分</span></td></tr>
+<tr class="package-row" data-card-type="年卡" data-vendor-name="ai.input.im"><td class="brawl-rank" data-val="19" style="font-weight:bold;color:#64748b">19</td><td data-val="ai.input.im"><strong>ai.input.im</strong></td><td data-val="Air年度">Air年度</td><td data-val="年卡"><span class="badge card-type-badge">年卡</span></td><td data-val="0.012"><span class="price-val" style="color:#3b82f6">¥0.012</span></td><td data-val="0.0017142857142857144"><span class="price-val" style="color:#3b82f6">0.0017x</span></td><td data-val="0.06"><span class="price-val" style="color:#3b82f6">¥0.060</span></td><td>$109,500/年</td><td>¥1,285.20</td><td data-val="不太地道"><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td style="font-size:0.85rem;color:#475569">$189/年；日限$300；1x倍率</td><td data-val="90.0"><span class="score-badge score-high">90.0 分</span></td></tr>
+<tr class="package-row" data-card-type="年卡" data-vendor-name="ai.input.im"><td class="brawl-rank" data-val="20" style="font-weight:bold;color:#64748b">20</td><td data-val="ai.input.im"><strong>ai.input.im</strong></td><td data-val="Lite年度">Lite年度</td><td data-val="年卡"><span class="badge card-type-badge">年卡</span></td><td data-val="0.016"><span class="price-val" style="color:#3b82f6">¥0.016</span></td><td data-val="0.002285714285714286"><span class="price-val" style="color:#3b82f6">0.0023x</span></td><td data-val="0.08"><span class="price-val" style="color:#3b82f6">¥0.080</span></td><td>$36,500/年</td><td>¥591.60</td><td data-val="不太地道"><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td style="font-size:0.85rem;color:#475569">$87/年；日限$100；1x倍率</td><td data-val="90.0"><span class="score-badge score-high">90.0 分</span></td></tr>
+<tr class="package-row" data-card-type="季卡" data-vendor-name="ai.input.im"><td class="brawl-rank" data-val="21" style="font-weight:bold;color:#64748b">21</td><td data-val="ai.input.im"><strong>ai.input.im</strong></td><td data-val="Air季度">Air季度</td><td data-val="季卡"><span class="badge card-type-badge">季卡</span></td><td data-val="0.022"><span class="price-val" style="color:#3b82f6">¥0.022</span></td><td data-val="0.0031428571428571426"><span class="price-val" style="color:#3b82f6">0.0031x</span></td><td data-val="0.10999999999999999"><span class="price-val" style="color:#3b82f6">¥0.110</span></td><td>$27,000/季</td><td>¥605.20</td><td data-val="不太地道"><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td style="font-size:0.85rem;color:#475569">$89/季；日限$300；1x倍率</td><td data-val="90.0"><span class="score-badge score-high">90.0 分</span></td></tr>
+<tr class="package-row" data-card-type="季卡" data-vendor-name="ai.input.im"><td class="brawl-rank" data-val="22" style="font-weight:bold;color:#64748b">22</td><td data-val="ai.input.im"><strong>ai.input.im</strong></td><td data-val="Max季度">Max季度</td><td data-val="季卡"><span class="badge card-type-badge">季卡</span></td><td data-val="0.033"><span class="price-val" style="color:#3b82f6">¥0.033</span></td><td data-val="0.004714285714285714"><span class="price-val" style="color:#3b82f6">0.0047x</span></td><td data-val="0.165"><span class="price-val" style="color:#3b82f6">¥0.165</span></td><td>$38,571/季</td><td>¥1,285.20</td><td data-val="不太地道"><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td style="font-size:0.85rem;color:#475569">$189/季；周限$3000；1x倍率</td><td data-val="90.0"><span class="score-badge score-high">90.0 分</span></td></tr>
+<tr class="package-row" data-card-type="月卡" data-vendor-name="ai.input.im"><td class="brawl-rank" data-val="23" style="font-weight:bold;color:#64748b">23</td><td data-val="ai.input.im"><strong>ai.input.im</strong></td><td data-val="Air月度">Air月度</td><td data-val="月卡"><span class="badge card-type-badge">月卡</span></td><td data-val="0.036"><span class="price-val" style="color:#3b82f6">¥0.036</span></td><td data-val="0.005142857142857143"><span class="price-val" style="color:#3b82f6">0.0051x</span></td><td data-val="0.18"><span class="price-val" style="color:#3b82f6">¥0.180</span></td><td>$9,000/月</td><td>¥319.60</td><td data-val="不太地道"><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td style="font-size:0.85rem;color:#475569">$47/月；日限$300；1x倍率</td><td data-val="90.0"><span class="score-badge score-high">90.0 分</span></td></tr>
+<tr class="package-row" data-card-type="月卡" data-vendor-name="ai.input.im"><td class="brawl-rank" data-val="24" style="font-weight:bold;color:#64748b">24</td><td data-val="ai.input.im"><strong>ai.input.im</strong></td><td data-val="Max月度">Max月度</td><td data-val="月卡"><span class="badge card-type-badge">月卡</span></td><td data-val="0.036"><span class="price-val" style="color:#3b82f6">¥0.036</span></td><td data-val="0.005142857142857143"><span class="price-val" style="color:#3b82f6">0.0051x</span></td><td data-val="0.18"><span class="price-val" style="color:#3b82f6">¥0.180</span></td><td>$12,857/月</td><td>¥469.20</td><td data-val="不太地道"><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td style="font-size:0.85rem;color:#475569">$69/月；周限$3000；1x倍率</td><td data-val="90.0"><span class="score-badge score-high">90.0 分</span></td></tr>
+<tr class="package-row" data-card-type="月卡" data-vendor-name="ai.input.im"><td class="brawl-rank" data-val="25" style="font-weight:bold;color:#64748b">25</td><td data-val="ai.input.im"><strong>ai.input.im</strong></td><td data-val="Lite月度">Lite月度</td><td data-val="月卡"><span class="badge card-type-badge">月卡</span></td><td data-val="0.043"><span class="price-val" style="color:#3b82f6">¥0.043</span></td><td data-val="0.006142857142857143"><span class="price-val" style="color:#3b82f6">0.0061x</span></td><td data-val="0.21499999999999997"><span class="price-val" style="color:#3b82f6">¥0.215</span></td><td>$3,000/月</td><td>¥129.20</td><td data-val="不太地道"><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td style="font-size:0.85rem;color:#475569">$19/月；日限$100；1x倍率</td><td data-val="90.0"><span class="score-badge score-high">90.0 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="zhishu.dev"><td class="brawl-rank" data-val="26" style="font-weight:bold;color:#64748b">26</td><td data-val="zhishu.dev"><strong>zhishu.dev</strong></td><td data-val="Codex 散充100刀">Codex 散充100刀</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.27"><span class="price-val" style="color:#f59e0b">¥0.270</span></td><td data-val="0.038571428571428576"><span class="price-val" style="color:#f59e0b">0.0386x</span></td><td data-val="1.35"><span class="price-val" style="color:#f59e0b">¥1.350</span></td><td>$333.33</td><td>¥90</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥90买$100余额；永不过期</td><td data-val="89.4"><span class="score-badge score-high">89.4 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="zhishu.dev"><td class="brawl-rank" data-val="27" style="font-weight:bold;color:#64748b">27</td><td data-val="zhishu.dev"><strong>zhishu.dev</strong></td><td data-val="Codex 散充50刀">Codex 散充50刀</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.27"><span class="price-val" style="color:#f59e0b">¥0.270</span></td><td data-val="0.038571428571428576"><span class="price-val" style="color:#f59e0b">0.0386x</span></td><td data-val="1.35"><span class="price-val" style="color:#f59e0b">¥1.350</span></td><td>$166.67</td><td>¥45</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥45买$50余额；永不过期</td><td data-val="89.4"><span class="score-badge score-high">89.4 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="FreeModel.dev"><td class="brawl-rank" data-val="28" style="font-weight:bold;color:#64748b">28</td><td data-val="FreeModel.dev"><strong>FreeModel.dev</strong></td><td data-val="散充">散充</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.285"><span class="price-val" style="color:#f59e0b">¥0.285</span></td><td data-val="0.04071428571428571"><span class="price-val" style="color:#f59e0b">0.0407x</span></td><td data-val="1.4249999999999998"><span class="price-val" style="color:#f59e0b">¥1.425</span></td><td>$100</td><td>¥28.51</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">$100余额实付32.81HKD(≈3GBP)</td><td data-val="88.7"><span class="score-badge score-high">88.7 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="zhishu.dev"><td class="brawl-rank" data-val="29" style="font-weight:bold;color:#64748b">29</td><td data-val="zhishu.dev"><strong>zhishu.dev</strong></td><td data-val="Codex 散充20刀">Codex 散充20刀</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.285"><span class="price-val" style="color:#f59e0b">¥0.285</span></td><td data-val="0.04071428571428571"><span class="price-val" style="color:#f59e0b">0.0407x</span></td><td data-val="1.4249999999999998"><span class="price-val" style="color:#f59e0b">¥1.425</span></td><td>$66.67</td><td>¥19</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥19买$20余额；永不过期</td><td data-val="88.7"><span class="score-badge score-high">88.7 分</span></td></tr>
+<tr class="package-row" data-card-type="月卡" data-vendor-name="UniVibe"><td class="brawl-rank" data-val="30" style="font-weight:bold;color:#64748b">30</td><td data-val="UniVibe"><strong>UniVibe</strong></td><td data-val="Air-PRO（保守口径）">Air-PRO（保守口径）</td><td data-val="月卡"><span class="badge card-type-badge">月卡</span></td><td data-val="0.227"><span class="price-val" style="color:#f59e0b">¥0.227</span></td><td data-val="0.03242857142857143"><span class="price-val" style="color:#f59e0b">0.0324x</span></td><td data-val="1.135"><span class="price-val" style="color:#f59e0b">¥1.135</span></td><td>$450/月</td><td>¥102.22</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">$15/月；按270000积分/月算</td><td data-val="88.5"><span class="score-badge score-high">88.5 分</span></td></tr>
+<tr class="package-row" data-card-type="日卡" data-vendor-name="krill-ai.com"><td class="brawl-rank" data-val="31" style="font-weight:bold;color:#64748b">31</td><td data-val="krill-ai.com"><strong>krill-ai.com</strong></td><td data-val="轻享天卡（10人团）">轻享天卡（10人团）</td><td data-val="日卡"><span class="badge card-type-badge">日卡</span></td><td data-val="0.03"><span class="price-val" style="color:#3b82f6">¥0.030</span></td><td data-val="0.004285714285714286"><span class="price-val" style="color:#3b82f6">0.0043x</span></td><td data-val="0.15"><span class="price-val" style="color:#3b82f6">¥0.150</span></td><td>$400/天</td><td>¥12</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥12/天；$80额度</td><td data-val="88.0"><span class="score-badge score-high">88.0 分</span></td></tr>
+<tr class="package-row" data-card-type="日卡" data-vendor-name="krill-ai.com"><td class="brawl-rank" data-val="32" style="font-weight:bold;color:#64748b">32</td><td data-val="krill-ai.com"><strong>krill-ai.com</strong></td><td data-val="尊享天卡（10人团）">尊享天卡（10人团）</td><td data-val="日卡"><span class="badge card-type-badge">日卡</span></td><td data-val="0.03"><span class="price-val" style="color:#3b82f6">¥0.030</span></td><td data-val="0.004285714285714286"><span class="price-val" style="color:#3b82f6">0.0043x</span></td><td data-val="0.15"><span class="price-val" style="color:#3b82f6">¥0.150</span></td><td>$800/天</td><td>¥24</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥24/天；$160额度</td><td data-val="88.0"><span class="score-badge score-high">88.0 分</span></td></tr>
+<tr class="package-row" data-card-type="日卡" data-vendor-name="krill-ai.com"><td class="brawl-rank" data-val="33" style="font-weight:bold;color:#64748b">33</td><td data-val="krill-ai.com"><strong>krill-ai.com</strong></td><td data-val="轻享天卡（单买）">轻享天卡（单买）</td><td data-val="日卡"><span class="badge card-type-badge">日卡</span></td><td data-val="0.04"><span class="price-val" style="color:#3b82f6">¥0.040</span></td><td data-val="0.005714285714285714"><span class="price-val" style="color:#3b82f6">0.0057x</span></td><td data-val="0.2"><span class="price-val" style="color:#3b82f6">¥0.200</span></td><td>$300/天</td><td>¥12</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥12/天；$60额度</td><td data-val="88.0"><span class="score-badge score-high">88.0 分</span></td></tr>
+<tr class="package-row" data-card-type="日卡" data-vendor-name="krill-ai.com"><td class="brawl-rank" data-val="34" style="font-weight:bold;color:#64748b">34</td><td data-val="krill-ai.com"><strong>krill-ai.com</strong></td><td data-val="尊享天卡（单买）">尊享天卡（单买）</td><td data-val="日卡"><span class="badge card-type-badge">日卡</span></td><td data-val="0.04"><span class="price-val" style="color:#3b82f6">¥0.040</span></td><td data-val="0.005714285714285714"><span class="price-val" style="color:#3b82f6">0.0057x</span></td><td data-val="0.2"><span class="price-val" style="color:#3b82f6">¥0.200</span></td><td>$600/天</td><td>¥24</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥24/天；$120额度</td><td data-val="88.0"><span class="score-badge score-high">88.0 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="zhishu.dev"><td class="brawl-rank" data-val="35" style="font-weight:bold;color:#64748b">35</td><td data-val="zhishu.dev"><strong>zhishu.dev</strong></td><td data-val="Codex 散充10刀">Codex 散充10刀</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.3"><span class="price-val" style="color:#f59e0b">¥0.300</span></td><td data-val="0.04285714285714286"><span class="price-val" style="color:#f59e0b">0.0429x</span></td><td data-val="1.5"><span class="price-val" style="color:#f59e0b">¥1.500</span></td><td>$33.33</td><td>¥10</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥10买$10余额；永不过期</td><td data-val="87.9"><span class="score-badge score-high">87.9 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="autocode.space"><td class="brawl-rank" data-val="36" style="font-weight:bold;color:#64748b">36</td><td data-val="autocode.space"><strong>autocode.space</strong></td><td data-val="散充（GPT-5.5）">散充（GPT-5.5）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.3"><span class="price-val" style="color:#f59e0b">¥0.300</span></td><td data-val="0.04285714285714286"><span class="price-val" style="color:#f59e0b">0.0429x</span></td><td data-val="1.5"><span class="price-val" style="color:#f59e0b">¥1.500</span></td><td>$3.33</td><td>¥1</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥1=$1余额；input$1.5/output$9/cached$0.15/1M</td><td data-val="87.9"><span class="score-badge score-high">87.9 分</span></td></tr>
+<tr class="package-row" data-card-type="月卡" data-vendor-name="iKun"><td class="brawl-rank" data-val="37" style="font-weight:bold;color:#64748b">37</td><td data-val="iKun"><strong>iKun</strong></td><td data-val="GPT-pro测试卡 30刀">GPT-pro测试卡 30刀</td><td data-val="月卡"><span class="badge card-type-badge">月卡</span></td><td data-val="0.25"><span class="price-val" style="color:#f59e0b">¥0.250</span></td><td data-val="0.03571428571428571"><span class="price-val" style="color:#f59e0b">0.0357x</span></td><td data-val="1.25"><span class="price-val" style="color:#f59e0b">¥1.250</span></td><td>$20/月</td><td>¥5</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥5/月；$30额度</td><td data-val="87.3"><span class="score-badge score-high">87.3 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="toolcode.top"><td class="brawl-rank" data-val="38" style="font-weight:bold;color:#64748b">38</td><td data-val="toolcode.top"><strong>toolcode.top</strong></td><td data-val="散充（GPT-Pro-纯享）">散充（GPT-Pro-纯享）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.35"><span class="price-val" style="color:#f59e0b">¥0.350</span></td><td data-val="0.049999999999999996"><span class="price-val" style="color:#f59e0b">0.0500x</span></td><td data-val="1.75"><span class="price-val" style="color:#f59e0b">¥1.750</span></td><td>$2.86</td><td>¥1</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥1=$1余额；0.35x倍率</td><td data-val="85.5"><span class="score-badge score-high">85.5 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="relayai.asia"><td class="brawl-rank" data-val="39" style="font-weight:bold;color:#64748b">39</td><td data-val="relayai.asia"><strong>relayai.asia</strong></td><td data-val="散充（满¥5000赠$1500）">散充（满¥5000赠$1500）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.385"><span class="price-val" style="color:#f59e0b">¥0.385</span></td><td data-val="0.055"><span class="price-val" style="color:#f59e0b">0.0550x</span></td><td data-val="1.925"><span class="price-val" style="color:#f59e0b">¥1.925</span></td><td>$13,000</td><td>¥5,000</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥5000→$6500余额；Codex 0.5x倍率</td><td data-val="83.8"><span class="score-badge score-high">83.8 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="chaoye.xyz"><td class="brawl-rank" data-val="40" style="font-weight:bold;color:#64748b">40</td><td data-val="chaoye.xyz"><strong>chaoye.xyz</strong></td><td data-val="散充（GPT 最高倍率）">散充（GPT 最高倍率）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.4"><span class="price-val" style="color:#f59e0b">¥0.400</span></td><td data-val="0.05714285714285715"><span class="price-val" style="color:#f59e0b">0.0571x</span></td><td data-val="2.0"><span class="price-val" style="color:#f59e0b">¥2.000</span></td><td>$2.50</td><td>¥1</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥1=1余额；GPT倍率0.4x</td><td data-val="83.1"><span class="score-badge score-high">83.1 分</span></td></tr>
+<tr class="package-row" data-card-type="月卡" data-vendor-name="zhishu.dev"><td class="brawl-rank" data-val="41" style="font-weight:bold;color:#64748b">41</td><td data-val="zhishu.dev"><strong>zhishu.dev</strong></td><td data-val="Codex 包月 Pro">Codex 包月 Pro</td><td data-val="月卡"><span class="badge card-type-badge">月卡</span></td><td data-val="0.195"><span class="price-val" style="color:#f59e0b">¥0.195</span></td><td data-val="0.027857142857142858"><span class="price-val" style="color:#f59e0b">0.0279x</span></td><td data-val="0.9750000000000001"><span class="price-val" style="color:#f59e0b">¥0.975</span></td><td>$1,666.67/月</td><td>¥325</td><td data-val="不太地道"><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td style="font-size:0.85rem;color:#475569">¥325/月；月限额$500；日限额$50；周限额$250；0.3x倍率</td><td data-val="83.0"><span class="score-badge score-high">83.0 分</span></td></tr>
+<tr class="package-row" data-card-type="月卡" data-vendor-name="zhishu.dev"><td class="brawl-rank" data-val="42" style="font-weight:bold;color:#64748b">42</td><td data-val="zhishu.dev"><strong>zhishu.dev</strong></td><td data-val="Codex 包月 Plus">Codex 包月 Plus</td><td data-val="月卡"><span class="badge card-type-badge">月卡</span></td><td data-val="0.21"><span class="price-val" style="color:#f59e0b">¥0.210</span></td><td data-val="0.03"><span class="price-val" style="color:#f59e0b">0.0300x</span></td><td data-val="1.05"><span class="price-val" style="color:#f59e0b">¥1.050</span></td><td>$1,000/月</td><td>¥210</td><td data-val="不太地道"><span class="badge" style="background:#f59e0b">🚧 不太地道</span></td><td style="font-size:0.85rem;color:#475569">¥210/月；月限额$300；日限额$30；周限额$150；0.3x倍率</td><td data-val="82.3"><span class="score-badge score-high">82.3 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="relayai.asia"><td class="brawl-rank" data-val="43" style="font-weight:bold;color:#64748b">43</td><td data-val="relayai.asia"><strong>relayai.asia</strong></td><td data-val="散充（满¥500赠$88）">散充（满¥500赠$88）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.425"><span class="price-val" style="color:#f59e0b">¥0.425</span></td><td data-val="0.060714285714285714"><span class="price-val" style="color:#f59e0b">0.0607x</span></td><td data-val="2.125"><span class="price-val" style="color:#f59e0b">¥2.125</span></td><td>$1,176</td><td>¥500</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥500→$588余额；Codex 0.5x倍率</td><td data-val="81.9"><span class="score-badge score-high">81.9 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="link-ai.cc"><td class="brawl-rank" data-val="44" style="font-weight:bold;color:#64748b">44</td><td data-val="link-ai.cc"><strong>link-ai.cc</strong></td><td data-val="散充$500（GPT-5.5 default分组）">散充$500（GPT-5.5 default分组）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.432"><span class="price-val" style="color:#f59e0b">¥0.432</span></td><td data-val="0.061714285714285715"><span class="price-val" style="color:#f59e0b">0.0617x</span></td><td data-val="2.16"><span class="price-val" style="color:#f59e0b">¥2.160</span></td><td>$833.33</td><td>¥360</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥360买$500余额(8.0折)；同上</td><td data-val="81.6"><span class="score-badge score-high">81.6 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="link-ai.cc"><td class="brawl-rank" data-val="45" style="font-weight:bold;color:#64748b">45</td><td data-val="link-ai.cc"><strong>link-ai.cc</strong></td><td data-val="散充$200（GPT-5.5 default分组）">散充$200（GPT-5.5 default分组）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.459"><span class="price-val" style="color:#f59e0b">¥0.459</span></td><td data-val="0.06557142857142857"><span class="price-val" style="color:#f59e0b">0.0656x</span></td><td data-val="2.295"><span class="price-val" style="color:#f59e0b">¥2.295</span></td><td>$333.33</td><td>¥153</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥153买$200余额(8.5折)；同上</td><td data-val="80.3"><span class="score-badge score-high">80.3 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="relayai.asia"><td class="brawl-rank" data-val="46" style="font-weight:bold;color:#64748b">46</td><td data-val="relayai.asia"><strong>relayai.asia</strong></td><td data-val="散充（无赠送）">散充（无赠送）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.5"><span class="price-val" style="color:#ef4444">¥0.500</span></td><td data-val="0.07142857142857142"><span class="price-val" style="color:#ef4444">0.0714x</span></td><td data-val="2.5"><span class="price-val" style="color:#ef4444">¥2.500</span></td><td>$2</td><td>¥1</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥1=$1余额；Codex 0.5x倍率</td><td data-val="78.3"><span class="score-badge score-medium">78.3 分</span></td></tr>
+<tr class="package-row" data-card-type="月卡" data-vendor-name="FreeModel.dev"><td class="brawl-rank" data-val="47" style="font-weight:bold;color:#64748b">47</td><td data-val="FreeModel.dev"><strong>FreeModel.dev</strong></td><td data-val="套餐 Pro">套餐 Pro</td><td data-val="月卡"><span class="badge card-type-badge">月卡</span></td><td data-val="0.16"><span class="price-val" style="color:#f59e0b">¥0.160</span></td><td data-val="0.022857142857142857"><span class="price-val" style="color:#f59e0b">0.0229x</span></td><td data-val="0.8"><span class="price-val" style="color:#f59e0b">¥0.800</span></td><td>$287.14/月</td><td>¥46.06</td><td data-val="恶犬"><span class="badge" style="background:#ef4444">🔗 恶犬</span></td><td style="font-size:0.85rem;color:#475569">£5/月；每5小时$10额度，每7天$67额度</td><td data-val="76.7"><span class="score-badge score-medium">76.7 分</span></td></tr>
+<tr class="package-row" data-card-type="月卡" data-vendor-name="FreeModel.dev"><td class="brawl-rank" data-val="48" style="font-weight:bold;color:#64748b">48</td><td data-val="FreeModel.dev"><strong>FreeModel.dev</strong></td><td data-val="套餐 Pro+">套餐 Pro+</td><td data-val="月卡"><span class="badge card-type-badge">月卡</span></td><td data-val="0.163"><span class="price-val" style="color:#f59e0b">¥0.163</span></td><td data-val="0.023285714285714288"><span class="price-val" style="color:#f59e0b">0.0233x</span></td><td data-val="0.8150000000000001"><span class="price-val" style="color:#f59e0b">¥0.815</span></td><td>$565.71/月</td><td>¥92.12</td><td data-val="恶犬"><span class="badge" style="background:#ef4444">🔗 恶犬</span></td><td style="font-size:0.85rem;color:#475569">£10/月；每5小时$20额度，每7天$132额度</td><td data-val="76.5"><span class="score-badge score-medium">76.5 分</span></td></tr>
+<tr class="package-row" data-card-type="月卡" data-vendor-name="FreeModel.dev"><td class="brawl-rank" data-val="49" style="font-weight:bold;color:#64748b">49</td><td data-val="FreeModel.dev"><strong>FreeModel.dev</strong></td><td data-val="套餐 Max">套餐 Max</td><td data-val="月卡"><span class="badge card-type-badge">月卡</span></td><td data-val="0.163"><span class="price-val" style="color:#f59e0b">¥0.163</span></td><td data-val="0.023285714285714288"><span class="price-val" style="color:#f59e0b">0.0233x</span></td><td data-val="0.8150000000000001"><span class="price-val" style="color:#f59e0b">¥0.815</span></td><td>$1,131.43/月</td><td>¥184.24</td><td data-val="恶犬"><span class="badge" style="background:#ef4444">🔗 恶犬</span></td><td style="font-size:0.85rem;color:#475569">£20/月；每5小时$40额度，每7天$264额度</td><td data-val="76.5"><span class="score-badge score-medium">76.5 分</span></td></tr>
+<tr class="package-row" data-card-type="月卡" data-vendor-name="FreeModel.dev"><td class="brawl-rank" data-val="50" style="font-weight:bold;color:#64748b">50</td><td data-val="FreeModel.dev"><strong>FreeModel.dev</strong></td><td data-val="套餐 Ultra">套餐 Ultra</td><td data-val="月卡"><span class="badge card-type-badge">月卡</span></td><td data-val="0.163"><span class="price-val" style="color:#f59e0b">¥0.163</span></td><td data-val="0.023285714285714288"><span class="price-val" style="color:#f59e0b">0.0233x</span></td><td data-val="0.8150000000000001"><span class="price-val" style="color:#f59e0b">¥0.815</span></td><td>$5,657.14/月</td><td>¥921.20</td><td data-val="恶犬"><span class="badge" style="background:#ef4444">🔗 恶犬</span></td><td style="font-size:0.85rem;color:#475569">£100/月；每5小时$200额度，每7天$1320额度</td><td data-val="76.5"><span class="score-badge score-medium">76.5 分</span></td></tr>
+<tr class="package-row" data-card-type="月卡" data-vendor-name="FreeModel.dev"><td class="brawl-rank" data-val="51" style="font-weight:bold;color:#64748b">51</td><td data-val="FreeModel.dev"><strong>FreeModel.dev</strong></td><td data-val="套餐 Power">套餐 Power</td><td data-val="月卡"><span class="badge card-type-badge">月卡</span></td><td data-val="0.163"><span class="price-val" style="color:#f59e0b">¥0.163</span></td><td data-val="0.023285714285714288"><span class="price-val" style="color:#f59e0b">0.0233x</span></td><td data-val="0.8150000000000001"><span class="price-val" style="color:#f59e0b">¥0.815</span></td><td>$11,314.29/月</td><td>¥1,842.41</td><td data-val="恶犬"><span class="badge" style="background:#ef4444">🔗 恶犬</span></td><td style="font-size:0.85rem;color:#475569">£200/月；每5小时$400额度，每7天$2640额度</td><td data-val="76.5"><span class="score-badge score-medium">76.5 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="link-ai.cc"><td class="brawl-rank" data-val="52" style="font-weight:bold;color:#64748b">52</td><td data-val="link-ai.cc"><strong>link-ai.cc</strong></td><td data-val="散充$100（GPT-5.5 default分组）">散充$100（GPT-5.5 default分组）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.54"><span class="price-val" style="color:#ef4444">¥0.540</span></td><td data-val="0.07714285714285715"><span class="price-val" style="color:#ef4444">0.0771x</span></td><td data-val="2.7"><span class="price-val" style="color:#ef4444">¥2.700</span></td><td>$166.67</td><td>¥90</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥90买$100余额；input$3/output$18/1M</td><td data-val="76.3"><span class="score-badge score-medium">76.3 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="link-ai.cc"><td class="brawl-rank" data-val="53" style="font-weight:bold;color:#64748b">53</td><td data-val="link-ai.cc"><strong>link-ai.cc</strong></td><td data-val="散充$500（GPT-5.5 Codex旗舰分组）">散充$500（GPT-5.5 Codex旗舰分组）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.562"><span class="price-val" style="color:#ef4444">¥0.562</span></td><td data-val="0.0802857142857143"><span class="price-val" style="color:#ef4444">0.0803x</span></td><td data-val="2.8100000000000005"><span class="price-val" style="color:#ef4444">¥2.810</span></td><td>$641.03</td><td>¥360</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥360买$500余额(8.0折)；同上</td><td data-val="75.3"><span class="score-badge score-medium">75.3 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="apikey.fun"><td class="brawl-rank" data-val="54" style="font-weight:bold;color:#64748b">54</td><td data-val="apikey.fun"><strong>apikey.fun</strong></td><td data-val="散充专业（Codex Pro 仅限 Codex）">散充专业（Codex Pro 仅限 Codex）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.571"><span class="price-val" style="color:#ef4444">¥0.571</span></td><td data-val="0.08157142857142856"><span class="price-val" style="color:#ef4444">0.0816x</span></td><td data-val="2.8549999999999995"><span class="price-val" style="color:#ef4444">¥2.855</span></td><td>$1,749.83</td><td>¥1000</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥1000买$1049.90余额；永不过期</td><td data-val="74.8"><span class="score-badge score-medium">74.8 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="apikey.fun"><td class="brawl-rank" data-val="55" style="font-weight:bold;color:#64748b">55</td><td data-val="apikey.fun"><strong>apikey.fun</strong></td><td data-val="散充进阶（Codex Pro 仅限 Codex）">散充进阶（Codex Pro 仅限 Codex）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.577"><span class="price-val" style="color:#ef4444">¥0.577</span></td><td data-val="0.08242857142857142"><span class="price-val" style="color:#ef4444">0.0824x</span></td><td data-val="2.885"><span class="price-val" style="color:#ef4444">¥2.885</span></td><td>$866.50</td><td>¥500</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥500买$519.90余额；永不过期</td><td data-val="74.6"><span class="score-badge score-medium">74.6 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="apikey.fun"><td class="brawl-rank" data-val="56" style="font-weight:bold;color:#64748b">56</td><td data-val="apikey.fun"><strong>apikey.fun</strong></td><td data-val="散充标准（Codex Pro 仅限 Codex）">散充标准（Codex Pro 仅限 Codex）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.583"><span class="price-val" style="color:#ef4444">¥0.583</span></td><td data-val="0.08328571428571428"><span class="price-val" style="color:#ef4444">0.0833x</span></td><td data-val="2.915"><span class="price-val" style="color:#ef4444">¥2.915</span></td><td>$171.65</td><td>¥100</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥100买$102.99余额；永不过期</td><td data-val="74.3"><span class="score-badge score-medium">74.3 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="link-ai.cc"><td class="brawl-rank" data-val="57" style="font-weight:bold;color:#64748b">57</td><td data-val="link-ai.cc"><strong>link-ai.cc</strong></td><td data-val="散充$200（GPT-5.5 Codex旗舰分组）">散充$200（GPT-5.5 Codex旗舰分组）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.597"><span class="price-val" style="color:#ef4444">¥0.597</span></td><td data-val="0.08528571428571428"><span class="price-val" style="color:#ef4444">0.0853x</span></td><td data-val="2.985"><span class="price-val" style="color:#ef4444">¥2.985</span></td><td>$256.41</td><td>¥153</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥153买$200余额(8.5折)；同上</td><td data-val="73.6"><span class="score-badge score-medium">73.6 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="apikey.fun"><td class="brawl-rank" data-val="58" style="font-weight:bold;color:#64748b">58</td><td data-val="apikey.fun"><strong>apikey.fun</strong></td><td data-val="散充体验（Codex Pro 仅限 Codex）">散充体验（Codex Pro 仅限 Codex）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.6"><span class="price-val" style="color:#ef4444">¥0.600</span></td><td data-val="0.08571428571428572"><span class="price-val" style="color:#ef4444">0.0857x</span></td><td data-val="3.0"><span class="price-val" style="color:#ef4444">¥3.000</span></td><td>$83.33</td><td>¥50</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥50买$50余额；永不过期</td><td data-val="73.4"><span class="score-badge score-medium">73.4 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="apikey.fun"><td class="brawl-rank" data-val="59" style="font-weight:bold;color:#64748b">59</td><td data-val="apikey.fun"><strong>apikey.fun</strong></td><td data-val="散充专业（Codex Pro 外接版）">散充专业（Codex Pro 外接版）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.667"><span class="price-val" style="color:#ef4444">¥0.667</span></td><td data-val="0.09528571428571429"><span class="price-val" style="color:#ef4444">0.0953x</span></td><td data-val="3.335"><span class="price-val" style="color:#ef4444">¥3.335</span></td><td>$1,499.86</td><td>¥1000</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥1000买$1049.90余额；永不过期</td><td data-val="70.2"><span class="score-badge score-medium">70.2 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="apikey.fun"><td class="brawl-rank" data-val="60" style="font-weight:bold;color:#64748b">60</td><td data-val="apikey.fun"><strong>apikey.fun</strong></td><td data-val="散充进阶（Codex Pro 外接版）">散充进阶（Codex Pro 外接版）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.673"><span class="price-val" style="color:#ef4444">¥0.673</span></td><td data-val="0.09614285714285715"><span class="price-val" style="color:#ef4444">0.0961x</span></td><td data-val="3.365"><span class="price-val" style="color:#ef4444">¥3.365</span></td><td>$742.71</td><td>¥500</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥500买$519.90余额；永不过期</td><td data-val="69.9"><span class="score-badge score-medium">69.9 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="apikey.fun"><td class="brawl-rank" data-val="61" style="font-weight:bold;color:#64748b">61</td><td data-val="apikey.fun"><strong>apikey.fun</strong></td><td data-val="散充标准（Codex Pro 外接版）">散充标准（Codex Pro 外接版）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.68"><span class="price-val" style="color:#ef4444">¥0.680</span></td><td data-val="0.09714285714285716"><span class="price-val" style="color:#ef4444">0.0971x</span></td><td data-val="3.4000000000000004"><span class="price-val" style="color:#ef4444">¥3.400</span></td><td>$147.13</td><td>¥100</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥100买$102.99余额；永不过期</td><td data-val="69.6"><span class="score-badge score-medium">69.6 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="apikey.fun"><td class="brawl-rank" data-val="62" style="font-weight:bold;color:#64748b">62</td><td data-val="apikey.fun"><strong>apikey.fun</strong></td><td data-val="散充体验（Codex Pro 外接版）">散充体验（Codex Pro 外接版）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.7"><span class="price-val" style="color:#ef4444">¥0.700</span></td><td data-val="0.09999999999999999"><span class="price-val" style="color:#ef4444">0.1000x</span></td><td data-val="3.5"><span class="price-val" style="color:#ef4444">¥3.500</span></td><td>$71.43</td><td>¥50</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥50买$50余额；永不过期</td><td data-val="68.6"><span class="score-badge score-medium">68.6 分</span></td></tr>
+<tr class="package-row" data-card-type="散充" data-vendor-name="link-ai.cc"><td class="brawl-rank" data-val="63" style="font-weight:bold;color:#64748b">63</td><td data-val="link-ai.cc"><strong>link-ai.cc</strong></td><td data-val="散充$100（GPT-5.5 Codex旗舰分组）">散充$100（GPT-5.5 Codex旗舰分组）</td><td data-val="散充"><span class="badge card-type-badge">散充</span></td><td data-val="0.702"><span class="price-val" style="color:#ef4444">¥0.702</span></td><td data-val="0.10028571428571428"><span class="price-val" style="color:#ef4444">0.1003x</span></td><td data-val="3.51"><span class="price-val" style="color:#ef4444">¥3.510</span></td><td>$128.21</td><td>¥90</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">¥90买$100余额；input$3.9/output$23.4/1M</td><td data-val="68.5"><span class="score-badge score-medium">68.5 分</span></td></tr>
+<tr class="package-row" data-card-type="月卡" data-vendor-name="HyperAPI.cc"><td class="brawl-rank" data-val="64" style="font-weight:bold;color:#64748b">64</td><td data-val="HyperAPI.cc"><strong>HyperAPI.cc</strong></td><td data-val="月卡（推荐）">月卡（推荐）</td><td data-val="月卡"><span class="badge card-type-badge">月卡</span></td><td data-val="1.273"><span class="price-val" style="color:#ef4444">¥1.273</span></td><td data-val="0.18185714285714286"><span class="price-val" style="color:#ef4444">0.1819x</span></td><td data-val="6.364999999999999"><span class="price-val" style="color:#ef4444">¥6.365</span></td><td>$320/月</td><td>¥407.32</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">$59.90/月；额度$480</td><td data-val="38.0"><span class="score-badge score-low">38.0 分</span></td></tr>
+<tr class="package-row" data-card-type="周卡" data-vendor-name="HyperAPI.cc"><td class="brawl-rank" data-val="65" style="font-weight:bold;color:#64748b">65</td><td data-val="HyperAPI.cc"><strong>HyperAPI.cc</strong></td><td data-val="周卡">周卡</td><td data-val="周卡"><span class="badge card-type-badge">周卡</span></td><td data-val="1.352"><span class="price-val" style="color:#ef4444">¥1.352</span></td><td data-val="0.19314285714285714"><span class="price-val" style="color:#ef4444">0.1931x</span></td><td data-val="6.760000000000001"><span class="price-val" style="color:#ef4444">¥6.760</span></td><td>$80/周期</td><td>¥108.12</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">$15.90/7天；额度$120</td><td data-val="30.1"><span class="score-badge score-low">30.1 分</span></td></tr>
+<tr class="package-row" data-card-type="月卡" data-vendor-name="HyperAPI.cc"><td class="brawl-rank" data-val="66" style="font-weight:bold;color:#64748b">66</td><td data-val="HyperAPI.cc"><strong>HyperAPI.cc</strong></td><td data-val="月卡轻量">月卡轻量</td><td data-val="月卡"><span class="badge card-type-badge">月卡</span></td><td data-val="1.696"><span class="price-val" style="color:#ef4444">¥1.696</span></td><td data-val="0.24228571428571427"><span class="price-val" style="color:#ef4444">0.2423x</span></td><td data-val="8.48"><span class="price-val" style="color:#ef4444">¥8.480</span></td><td>$160/月</td><td>¥271.32</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">$39.90/月；额度$240</td><td data-val="27.0"><span class="score-badge score-low">27.0 分</span></td></tr>
+<tr class="package-row" data-card-type="日卡" data-vendor-name="HyperAPI.cc"><td class="brawl-rank" data-val="67" style="font-weight:bold;color:#64748b">67</td><td data-val="HyperAPI.cc"><strong>HyperAPI.cc</strong></td><td data-val="日卡">日卡</td><td data-val="日卡"><span class="badge card-type-badge">日卡</span></td><td data-val="1.479"><span class="price-val" style="color:#ef4444">¥1.479</span></td><td data-val="0.2112857142857143"><span class="price-val" style="color:#ef4444">0.2113x</span></td><td data-val="7.3950000000000005"><span class="price-val" style="color:#ef4444">¥7.395</span></td><td>$13.33/周期</td><td>¥19.72</td><td data-val="良心"><span class="badge" style="background:#22c55e">🟢 良心</span></td><td style="font-size:0.85rem;color:#475569">$2.90/天；额度$20</td><td data-val="19.0"><span class="score-badge score-low">19.0 分</span></td></tr>
+</tbody></table></div></div>
+
+<div style="text-align:center;color:#94a3b8;font-size:0.8rem;margin:2rem 0 1rem;padding-top:1rem;border-top:1px solid #e2e8f0">
+  AI 中转站比价 analysis 报告 · 数据截至 2026-06-19 · 仅供参考，请以实际体验为准
+</div>
+
+<script>
+(function() {
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    const targetContent = document.getElementById(tabId);
+    if (targetContent) {
+      targetContent.classList.add('active');
+    }
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      if (btn.getAttribute('onclick').includes(tabId)) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
+  window.switchTab = switchTab;
+
+  function setCheckboxes(selector, checked) {
+    document.querySelectorAll(selector).forEach(chk => {
+      chk.checked = checked;
+    });
+    updateFilter();
+  }
+  window.setCheckboxes = setCheckboxes;
+
+  const chks = document.querySelectorAll('.filter-chk');
+  const vendorChks = document.querySelectorAll('.filter-vendor-chk');
+  
+  function updateFilter() {
+    const activeTypes = [];
+    chks.forEach(chk => {
+      if (chk.checked) {
+        activeTypes.push(chk.value);
+      }
+    });
+    
+    const activeVendors = [];
+    vendorChks.forEach(chk => {
+      if (chk.checked) {
+        activeVendors.push(chk.value);
+      }
+    });
+      
+    const rows = document.querySelectorAll('#brawl-table .package-row');
+    rows.forEach(row => {
+      const type = row.getAttribute('data-card-type');
+      const vendor = row.getAttribute('data-vendor-name');
+      const typeMatch = activeTypes.indexOf(type) !== -1;
+      const vendorMatch = activeVendors.indexOf(vendor) !== -1;
+      if (typeMatch && vendorMatch) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+    
+    // 3. 重新计算大乱斗中可见套餐的排名数字
+    const brawlRows = document.querySelectorAll('#brawl-table .package-row');
+    let rank = 1;
+    brawlRows.forEach(row => {
+      if (row.style.display !== 'none') {
+        const rankCell = row.querySelector('.brawl-rank');
+        if (rankCell) {
+          rankCell.textContent = rank++;
+        }
+      }
+    });
+  }
+  
+  window.updateFilter = updateFilter;
+  
+  chks.forEach(chk => {
+    chk.addEventListener('change', updateFilter);
+  });
+  vendorChks.forEach(chk => {
+    chk.addEventListener('change', updateFilter);
+  });
+  
+  updateFilter();
+
+  // Initialize sorting
+  initSorting();
+  
+  function initSorting() {
+    document.querySelectorAll('table').forEach(table => {
+      const isLeaderboard = table.querySelector('.leaderboard-row') !== null;
+      const rowSelector = isLeaderboard ? '.leaderboard-row' : '.package-row';
+      const tbody = table.querySelector('tbody');
+      if (!tbody) return;
+      const headers = table.querySelectorAll('thead th.sortable');
+      let currentSort = { index: -1, asc: true };
+
+      headers.forEach(header => {
+        const indicator = document.createElement('span');
+        indicator.className = 'sort-indicator';
+        indicator.style.marginLeft = '4px';
+        indicator.style.fontSize = '0.75rem';
+        indicator.style.color = '#94a3b8';
+        indicator.textContent = '⇅';
+        header.appendChild(indicator);
+        header.style.cursor = 'pointer';
+        
+        const colIndex = Array.from(header.parentNode.children).indexOf(header);
+
+        header.addEventListener('click', () => {
+          const type = header.getAttribute('data-sort');
+          const rows = Array.from(tbody.querySelectorAll(rowSelector));
+          
+          const isAsc = currentSort.index === colIndex ? !currentSort.asc : true;
+          currentSort = { index: colIndex, asc: isAsc };
+
+          headers.forEach(h => {
+            const ind = h.querySelector('.sort-indicator');
+            if (ind) ind.textContent = '⇅';
+          });
+          const currentIndicator = header.querySelector('.sort-indicator');
+          if (currentIndicator) {
+            currentIndicator.textContent = isAsc ? '▲' : '▼';
+          }
+
+          rows.sort((rowA, rowB) => {
+            const cellA = rowA.children[colIndex];
+            const cellB = rowB.children[colIndex];
+            let valA = cellA ? cellA.getAttribute('data-val') : '';
+            let valB = cellB ? cellB.getAttribute('data-val') : '';
+
+            if (type === 'num') {
+              return (parseFloat(valA) - parseFloat(valB)) * (isAsc ? 1 : -1);
+            } else if (type === 'rank') {
+              return (parseInt(valA) - parseInt(valB)) * (isAsc ? 1 : -1);
+            } else {
+              return valA.localeCompare(valB, 'zh-CN') * (isAsc ? 1 : -1);
+            }
+          });
+
+          rows.forEach(row => tbody.appendChild(row));
+
+          updateFilter();
+        });
+      });
+    });
+  }
+})();
+</script>
+</body>
+</html>
